@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase, isDemoMode } from '../lib/supabase';
 import { DEMO_COMPETITIONS } from '../lib/demoData';
 import { useAuth } from '../context/AuthContext';
+import { extractFilePath } from '../lib/storageUtils';
 
 export function useCompetitions() {
   const { user } = useAuth();
@@ -90,8 +91,30 @@ export function useCompetitions() {
       return;
     }
 
-    await supabase.from('competitions').delete().eq('id', id);
-    setCompetitions(prev => prev.filter(c => c.id !== id));
+    try {
+      // 1. Get competition to find the certificate URL
+      const { data: comp } = await supabase
+        .from('competitions')
+        .select('certificate_url')
+        .eq('id', id)
+        .single();
+
+      if (comp?.certificate_url) {
+        // 2. Extract path and delete from storage
+        const filePath = extractFilePath(comp.certificate_url, 'certificates');
+        if (filePath) {
+          await supabase.storage.from('certificates').remove([filePath]);
+        }
+      }
+
+      // 3. Delete database record
+      const { error: err } = await supabase.from('competitions').delete().eq('id', id);
+      if (err) throw err;
+
+      setCompetitions(prev => prev.filter(c => c.id !== id));
+    } catch (err) {
+      console.error('Error deleting competition:', err);
+    }
   }, []);
 
   useEffect(() => {

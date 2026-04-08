@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase, isDemoMode } from '../lib/supabase';
 import { DEMO_ARTWORKS } from '../lib/demoData';
 import { useAuth } from '../context/AuthContext';
+import { extractFilePath } from '../lib/storageUtils';
 
 export function useArtworks() {
   const { user } = useAuth();
@@ -102,8 +103,30 @@ export function useArtworks() {
       return;
     }
 
-    await supabase.from('artworks').delete().eq('id', id);
-    setArtworks(prev => prev.filter(a => a.id !== id));
+    try {
+      // 1. Get the artwork to find the image URL
+      const { data: artwork } = await supabase
+        .from('artworks')
+        .select('image_url')
+        .eq('id', id)
+        .single();
+
+      if (artwork?.image_url) {
+        // 2. Extract path and delete from storage
+        const filePath = extractFilePath(artwork.image_url, 'artworks');
+        if (filePath) {
+          await supabase.storage.from('artworks').remove([filePath]);
+        }
+      }
+
+      // 3. Delete database record
+      const { error: err } = await supabase.from('artworks').delete().eq('id', id);
+      if (err) throw err;
+
+      setArtworks(prev => prev.filter(a => a.id !== id));
+    } catch (err) {
+      console.error('Error deleting artwork:', err);
+    }
   }, []);
 
   useEffect(() => {

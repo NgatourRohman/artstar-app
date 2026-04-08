@@ -4,9 +4,11 @@ import { DEMO_ARTWORKS } from '../lib/demoData';
 import { useAuth } from '../context/AuthContext';
 import { extractFilePath } from '../lib/storageUtils';
 import { compressImage } from '../lib/imageUtils';
+import { useNotifications } from '../context/NotificationContext';
 
 export function useArtworks() {
   const { user } = useAuth();
+  const { showSuccess, showError } = useNotifications();
   const [artworks, setArtworks] = useState(isDemoMode ? DEMO_ARTWORKS : []);
   const [loading, setLoading] = useState(!isDemoMode);
   const [error, setError] = useState(null);
@@ -95,11 +97,13 @@ export function useArtworks() {
 
       if (err) throw err;
       setArtworks(prev => [data, ...prev]);
+      showSuccess('Artwork added successfully! ✨');
       return { data, error: null };
     } catch (err) {
+      showError(`Failed to add artwork: ${err.message}`);
       return { data: null, error: err.message };
     }
-  }, [user]);
+  }, [user, showSuccess, showError]);
 
   const deleteArtwork = useCallback(async (id) => {
     if (isDemoMode) {
@@ -119,10 +123,15 @@ export function useArtworks() {
         // 2. Extract path and delete from storage
         const filePath = extractFilePath(artwork.image_url, 'artworks');
         if (filePath) {
+          console.debug(`Attempting to remove storage file: ${filePath}`);
           const { error: storageError } = await supabase.storage.from('artworks').remove([filePath]);
           if (storageError) {
-            console.error('Failed to remove file from storage:', storageError);
-            // We continue anyway so the DB record can be cleaned up
+            console.error('SUPABASE STORAGE ERROR:', storageError);
+            showError(`Could not delete image from gallery storage (Error: ${storageError.message}). Please check bucket permissions.`);
+            // We continue anyway so the DB record can be cleaned up if desired, 
+            // OR we can stop here. The user wants the bucket clean, so maybe we SHOULD know.
+          } else {
+            console.debug('Successfully removed file from storage');
           }
         } else {
           console.warn('Could not extract file path from URL:', artwork.image_url);
@@ -134,10 +143,12 @@ export function useArtworks() {
       if (err) throw err;
 
       setArtworks(prev => prev.filter(a => a.id !== id));
+      showSuccess('Artwork deleted');
     } catch (err) {
       console.error('Error deleting artwork:', err);
+      showError(`Failed to delete artwork: ${err.message}`);
     }
-  }, []);
+  }, [showSuccess, showError]);
 
   useEffect(() => {
     fetchArtworks();

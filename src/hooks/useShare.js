@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react';
 import { supabase, isDemoMode } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 
 export function useShare() {
   const { user } = useAuth();
+  const { showSuccess, showError } = useNotifications();
   const [shareUrl, setShareUrl] = useState(null);
 
   const createShareLink = useCallback(async (itemType, itemId) => {
@@ -31,18 +33,21 @@ export function useShare() {
       return url;
     } catch (err) {
       console.error('Error creating share:', err);
+      showError('Failed to create a share link. Please try again.');
       return null;
     }
-  }, [user]);
+  }, [user, showError]);
 
   const copyToClipboard = useCallback(async (url) => {
     try {
       await navigator.clipboard.writeText(url);
+      showSuccess('Link copied to clipboard! 📋');
       return true;
     } catch {
+      showError('Failed to copy to clipboard.');
       return false;
     }
-  }, []);
+  }, [showSuccess, showError]);
 
   return { shareUrl, createShareLink, copyToClipboard };
 }

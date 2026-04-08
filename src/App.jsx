@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
+import ToastContainer from './components/ui/Toast';
+import ErrorBoundary from './components/layout/ErrorBoundary';
 import AppShell from './components/layout/AppShell';
 import Dashboard from './pages/Dashboard';
 import Gallery from './pages/Gallery';
@@ -67,11 +70,16 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-        <Analytics />
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <NotificationProvider>
+          <AuthProvider>
+            <AppRoutes />
+            <Analytics />
+            <ToastContainer />
+          </AuthProvider>
+        </NotificationProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }

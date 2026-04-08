@@ -2,9 +2,11 @@ import { useState, useCallback } from 'react';
 import { supabase, isDemoMode } from '../lib/supabase';
 import { DEMO_PROFILE } from '../lib/demoData';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 
 export function useProfile() {
   const { user } = useAuth();
+  const { showSuccess, showError } = useNotifications();
   const [profile, setProfile] = useState(isDemoMode ? DEMO_PROFILE : null);
   const [loading, setLoading] = useState(false);
 
@@ -42,10 +44,11 @@ export function useProfile() {
       }
     } catch (err) {
       console.error('Error fetching profile:', err);
+      showError('Could not load your profile details.');
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, showError]);
 
   const updateProfile = useCallback(async (updates) => {
     if (isDemoMode) {
@@ -63,10 +66,12 @@ export function useProfile() {
 
       if (error) throw error;
       setProfile(data);
+      showSuccess('Profile updated! ✨');
     } catch (err) {
       console.error('Error updating profile:', err);
+      showError(`Failed to update profile: ${err.message}`);
     }
-  }, [user]);
+  }, [user, showSuccess, showError]);
 
   return { profile, loading, fetchProfile, updateProfile };
 }

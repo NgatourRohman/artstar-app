@@ -1,10 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase, isDemoMode } from '../lib/supabase';
 import { DEMO_PROFILE } from '../lib/demoData';
+import { useNotifications } from './NotificationContext';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+  const { showSuccess, showError } = useNotifications();
   const [session, setSession] = useState(isDemoMode ? { user: DEMO_PROFILE } : null);
   const [user, setUser] = useState(isDemoMode ? DEMO_PROFILE : null);
   const [loading, setLoading] = useState(!isDemoMode);
@@ -32,28 +33,47 @@ export function AuthProvider({ children }) {
 
   const signUp = async (email, password, displayName) => {
     if (isDemoMode) return { error: null };
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { display_name: displayName },
-      },
-    });
-    return { data, error };
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: displayName },
+        },
+      });
+      if (error) throw error;
+      showSuccess(`Welcome, ${displayName}! Please check your email to verify.`);
+      return { data, error };
+    } catch (err) {
+      showError(`Sign up failed: ${err.message}`);
+      return { data: null, error: err };
+    }
   };
 
   const signIn = async (email, password) => {
     if (isDemoMode) return { error: null };
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { data, error };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      showSuccess('Log in successful! 🎨');
+      return { data, error };
+    } catch (err) {
+      showError(`Log in failed: ${err.message}`);
+      return { data: null, error: err };
+    }
   };
 
   const signOut = async () => {
     if (isDemoMode) return;
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+      showSuccess('Logged out safely. See you soon!');
+    } catch (err) {
+      showError('Error during sign out.');
+    }
   };
 
   const value = {

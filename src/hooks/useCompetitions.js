@@ -4,9 +4,11 @@ import { DEMO_COMPETITIONS } from '../lib/demoData';
 import { useAuth } from '../context/AuthContext';
 import { extractFilePath } from '../lib/storageUtils';
 import { compressImage } from '../lib/imageUtils';
+import { useNotifications } from '../context/NotificationContext';
 
 export function useCompetitions() {
   const { user } = useAuth();
+  const { showSuccess, showError } = useNotifications();
   const [competitions, setCompetitions] = useState(isDemoMode ? DEMO_COMPETITIONS : []);
   const [loading, setLoading] = useState(!isDemoMode);
   const [error, setError] = useState(null);
@@ -83,11 +85,13 @@ export function useCompetitions() {
 
       if (err) throw err;
       setCompetitions(prev => [data, ...prev]);
+      showSuccess('Competition record added! 🏆');
       return { data, error: null };
     } catch (err) {
+      showError(`Failed to add competition: ${err.message}`);
       return { data: null, error: err.message };
     }
-  }, [user]);
+  }, [user, showSuccess, showError]);
 
   const deleteCompetition = useCallback(async (id) => {
     if (isDemoMode) {
@@ -107,13 +111,16 @@ export function useCompetitions() {
         // 2. Extract path and delete from storage
         const filePath = extractFilePath(comp.certificate_url, 'certificates');
         if (filePath) {
+          console.debug(`Attempting to remove certificate file: ${filePath}`);
           const { error: storageError } = await supabase.storage.from('certificates').remove([filePath]);
           if (storageError) {
-            console.error('Failed to remove certificate from storage:', storageError);
-            // We continue anyway so the DB record can be cleaned up
+            console.error('SUPABASE STORAGE ERROR (Certificates):', storageError);
+            showError(`Could not delete certificate from storage (Error: ${storageError.message}).`);
+          } else {
+            console.debug('Successfully removed certificate from storage');
           }
         } else {
-          console.warn('Could not extract file path from URL:', comp.certificate_url);
+          console.warn('Could not extract certificate path from URL:', comp.certificate_url);
         }
       }
 
@@ -122,10 +129,12 @@ export function useCompetitions() {
       if (err) throw err;
 
       setCompetitions(prev => prev.filter(c => c.id !== id));
+      showSuccess('Competition deleted');
     } catch (err) {
       console.error('Error deleting competition:', err);
+      showError(`Failed to delete competition: ${err.message}`);
     }
-  }, []);
+  }, [showSuccess, showError]);
 
   useEffect(() => {
     fetchCompetitions();

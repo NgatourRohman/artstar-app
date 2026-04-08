@@ -3,9 +3,11 @@ import { supabase, isDemoMode } from '../lib/supabase';
 import { BADGE_DEFINITIONS, checkBadgeEligibility } from '../lib/badges';
 import { DEMO_USER_BADGES } from '../lib/demoData';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 
 export function useBadges() {
   const { user } = useAuth();
+  const { showError } = useNotifications();
   const [userBadges, setUserBadges] = useState(isDemoMode ? DEMO_USER_BADGES : []);
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
 
@@ -25,8 +27,9 @@ export function useBadges() {
       setUserBadges(data || []);
     } catch (err) {
       console.error('Error fetching badges:', err);
+      showError('Failed to load your badges! 🏅');
     }
-  }, [user]);
+  }, [user, showError]);
 
   const checkAndUnlockBadges = useCallback(async (stats) => {
     const currentBadgeIds = userBadges.map(b => b.badge_id);
@@ -68,9 +71,10 @@ export function useBadges() {
       return newBadges;
     } catch (err) {
       console.error('Error unlocking badges:', err);
+      showError(`Oops! Error unlocking badge: ${err.message}`);
       return [];
     }
-  }, [user, userBadges]);
+  }, [user, userBadges, showError]);
 
   const clearNewlyUnlocked = useCallback(() => {
     setNewlyUnlocked([]);

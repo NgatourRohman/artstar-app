@@ -41,10 +41,17 @@ export default function Dashboard() {
   const artistName = displayProfile?.display_name || 'Artist';
 
   const getGreeting = () => {
+    // Get hour in 24h format regardless of system settings
     const hour = new Date().getHours();
-    if (hour < 12) return t('dashboard.greeting_morning', { name: artistName });
-    if (hour < 15) return t('dashboard.greeting_afternoon', { name: artistName });
-    if (hour < 18) return t('dashboard.greeting_evening', { name: artistName });
+    
+    // Logika salam yang lebih mendetail:
+    // 05 - 10: Pagi
+    // 11 - 14: Siang
+    // 15 - 18: Sore
+    // 19 - 04: Malam
+    if (hour >= 5 && hour < 11) return t('dashboard.greeting_morning', { name: artistName });
+    if (hour >= 11 && hour < 15) return t('dashboard.greeting_afternoon', { name: artistName });
+    if (hour >= 15 && hour < 19) return t('dashboard.greeting_evening', { name: artistName });
     return t('dashboard.greeting', { name: artistName });
   };
 

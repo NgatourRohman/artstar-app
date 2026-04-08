@@ -21,27 +21,21 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/favicon.svg',
-            sizes: 'any',
+            src: '/icons/favicon-app.svg',
+            sizes: '192x192',
             type: 'image/svg+xml',
             purpose: 'any',
           },
           {
-            src: '/favicon.svg',
+            src: '/icons/favicon-app.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             purpose: 'maskable',
           },
           {
-            src: '/icons/icon-192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any',
-          },
-          {
-            src: '/icons/icon-512.png',
+            src: '/icons/favicon-app.svg',
             sizes: '512x512',
-            type: 'image/png',
+            type: 'image/svg+xml',
             purpose: 'any',
           },
         ],

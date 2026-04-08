@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { supabase, isDemoMode } from '../lib/supabase';
 import { BADGE_DEFINITIONS, checkBadgeEligibility } from '../lib/badges';
 import { DEMO_USER_BADGES } from '../lib/demoData';
@@ -12,8 +12,8 @@ export function useBadges() {
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
 
   const fetchUserBadges = useCallback(async () => {
-    if (isDemoMode) {
-      setUserBadges(DEMO_USER_BADGES);
+    if (!user || isDemoMode) {
+      if (isDemoMode) setUserBadges(DEMO_USER_BADGES);
       return;
     }
 
@@ -30,6 +30,10 @@ export function useBadges() {
       showError('Failed to load your badges! 🏅');
     }
   }, [user, showError]);
+
+  useEffect(() => {
+    fetchUserBadges();
+  }, [fetchUserBadges]);
 
   const checkAndUnlockBadges = useCallback(async (stats) => {
     const currentBadgeIds = userBadges.map(b => b.badge_id);
@@ -70,11 +74,16 @@ export function useBadges() {
       setNewlyUnlocked(newBadges);
       return newBadges;
     } catch (err) {
+      // If it's a duplicate key error, we can safely ignore it or handle it silently
+      if (err.code === '23505') {
+        fetchUserBadges(); // Re-sync to be sure
+        return [];
+      }
       console.error('Error unlocking badges:', err);
       showError(`Oops! Error unlocking badge: ${err.message}`);
       return [];
     }
-  }, [user, userBadges, showError]);
+  }, [user, userBadges, showError, fetchUserBadges]);
 
   const clearNewlyUnlocked = useCallback(() => {
     setNewlyUnlocked([]);

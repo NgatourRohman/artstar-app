@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { Plus, Share2, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -121,7 +122,7 @@ export default function Competitions() {
 
       {/* Competition List */}
       {competitions.length > 0 ? (
-        <div className="flex flex-col gap-md">
+        <div className="competitions-list">
           {competitions.map((comp) => {
             const resultConf = RESULT_CONFIG[comp.result] || RESULT_CONFIG.participated;
             return (
@@ -164,7 +165,7 @@ export default function Competitions() {
       )}
 
       {/* Add Competition Modal */}
-      {showAddForm && (
+      {showAddForm && createPortal(
         <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
@@ -177,7 +178,7 @@ export default function Competitions() {
                   id="comp-name"
                   type="text"
                   className="form-input"
-                  placeholder="School Art Fair"
+                  placeholder={t('common.name')}
                   value={name}
                   onChange={e => setName(e.target.value)}
                   required
@@ -231,15 +232,16 @@ export default function Competitions() {
               </div>
 
               <button type="submit" className="btn btn-accent btn-block btn-lg" disabled={saving}>
-                {saving ? '✨ Saving...' : '🎯 Add Competition!'}
+                {saving ? `✨ ${t('common.saving')}` : `🎯 ${t('common.add_competition_btn')}`}
               </button>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Competition Detail Modal */}
-      {selectedComp && (
+      {selectedComp && createPortal(
         <div className="modal-overlay" onClick={() => setSelectedComp(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
@@ -285,26 +287,28 @@ export default function Competitions() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Share Modal */}
-      {showShareModal && shareUrl && (
+      {showShareModal && shareUrl && createPortal(
         <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
-            <h2 className="modal-title">Share Achievement! 🎉</h2>
+            <h2 className="modal-title">{t('common.share_comp_title')}</h2>
             <p className="text-center" style={{ color: 'var(--color-text-secondary)', marginBottom: 16 }}>
-              Show everyone your amazing achievement
+              {t('common.share_comp_desc')}
             </p>
             <div className="share-link-box">
               <input type="text" className="share-link-input" value={shareUrl} readOnly />
               <button className="btn btn-primary btn-sm" onClick={handleCopy}>
-                {copied ? '✅' : '📋'}
+                {copied ? `✅ ${t('common.copied')}` : '📋'}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -41,7 +41,7 @@ export function useArtworks() {
     }
   }, [user]);
 
-  const addArtwork = useCallback(async ({ title, description, category, imageFile }) => {
+  const addArtwork = useCallback(async ({ title, description, category, imageFile, date }) => {
     if (isDemoMode) {
       const newArt = {
         id: `art-${Date.now()}`,
@@ -54,6 +54,8 @@ export function useArtworks() {
         uploaded_at: new Date().toISOString(),
         color: ['#7C3AED', '#F97316', '#EC4899', '#3B82F6', '#10B981'][Math.floor(Math.random() * 5)],
       };
+      // For demo mode we just keep original behavior or simulate properly
+      if (date) newArt.created_at = new Date(date).toISOString();
       setArtworks(prev => [newArt, ...prev]);
       return { data: newArt, error: null };
     }
@@ -81,6 +83,7 @@ export function useArtworks() {
           description,
           category,
           image_url,
+          created_at: date ? new Date(date).toISOString() : new Date().toISOString()
         })
         .select()
         .single();

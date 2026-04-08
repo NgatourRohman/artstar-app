@@ -4,7 +4,7 @@
     "gallery": "Galeri",
     "add": "Tambah",
     "compete": "Lomba",
-    "me": "Saya",
+    "me": "Profil",
     "create": "Buat"
   },
   "dashboard": {
@@ -43,7 +43,12 @@
     "cancel": "Batal",
     "change_avatar": "Ganti Avatar",
     "select_avatar": "Pilih avatar",
-    "change_name": "Ganti Nama"
+    "change_name": "Ganti Nama",
+    "settings": "Pengaturan",
+    "change_name_avatar": "Ganti nama & avatar",
+    "earned": "Mendapat {{count}}",
+    "see_journey": "Lihat perjalananmu",
+    "see_you_later": "Sampai jumpa!"
   },
   "badges": {
     "title": "Lencana Saya",
@@ -57,7 +62,24 @@
       "first_win": { "name": "Sang Juara!", "desc": "Menang lomba — kamu luar biasa!" },
       "five_competitions": { "name": "Ahli Lomba!", "desc": "Ikuti 5 perlombaan" },
       "colorful_creator": { "name": "Kreator Warna-warni!", "desc": "Buat 3 gaya karya yang berbeda" },
-      "streak_3": { "name": "Membara!", "desc": "Unggah 3 karya dalam satu minggu" }
+      "streak_3": { "name": "Membara!", "desc": "Unggah 3 karya dalam satu minggu" },
+      "twenty_artworks": { "name": "Kolektor Seni", "desc": "Menambah 20 karya" },
+      "fifty_artworks": { "name": "Seniman Andal", "desc": "Menambah 50 karya" },
+      "hundred_artworks": { "name": "Legenda Seni", "desc": "Menambah 100 karya" },
+      "ten_competitions": { "name": "Veteran Lomba", "desc": "Berpartisipasi di 10 kompetisi" },
+      "master_creator": { "name": "Seniman Abad Renaisans", "desc": "Menguasai 5 kategori karya" },
+      "persistent_artist": { "name": "Tak Terhentikan", "desc": "Konsisten 10 minggu berturut-turut!" },
+      "two_artworks": { "name": "Langkah Pertama", "desc": "Menambah karya kedua" },
+      "thirty_artworks": { "name": "Seniman Dedikasi", "desc": "Menambah 30 karya" },
+      "seventy_five_artworks": { "name": "Keajaiban Seni", "desc": "Menambah 75 karya" },
+      "two_competitions": { "name": "Pemanasan", "desc": "Berpartisipasi di 2 kompetisi" },
+      "twenty_competitions": { "name": "Penantang Berani", "desc": "Berpartisipasi di 20 kompetisi" },
+      "fifty_competitions": { "name": "Raja Turnamen", "desc": "Berpartisipasi di 50 kompetisi" },
+      "two_categories": { "name": "Eksplorasi Gaya", "desc": "Menguasai 2 kategori karya" },
+      "four_categories": { "name": "Seniman Serba Bisa", "desc": "Menguasai 4 kategori karya" },
+      "six_categories": { "name": "Ahli Segala Seni", "desc": "Menguasai 6 kategori karya" },
+      "streak_5": { "name": "Kreator Konsisten", "desc": "Konsisten 5 minggu!" },
+      "streak_20": { "name": "Kebiasaan Emas", "desc": "Konsisten 20 minggu!" }
     }
   },
   "competitions": {
@@ -77,11 +99,16 @@
     "entered_competition": "Mengikuti perlombaan",
     "earned_badge": "Mendapat lencana baru!",
     "empty_title": "Perjalananmu dimulai sekarang!",
-    "empty_subtitle": "Tambahkan karya seni untuk melihatnya di sini"
+    "empty_subtitle": "Tambahkan karya seni untuk melihatnya di sini",
+    "type": {
+      "artwork": "Karya Seni",
+      "competition": "Lomba",
+      "badge": "Lencana"
+    }
   },
   "common": {
-    "add_artwork": "+ Tambah Karya",
-    "add_competition": "+ Tambah Lomba",
+    "add_artwork": "Tambah Karya",
+    "add_competition": "Tambah Lomba",
     "share": "Bagikan",
     "delete": "Hapus",
     "title": "Judul",
@@ -92,7 +119,26 @@
     "upload_image": "Ketuk atau seret untuk unggah gambar",
     "name": "Nama",
     "result": "Hasil",
-    "upload_certificate": "Unggah Piagam (Opsional)"
+    "upload_certificate": "Unggah Piagam (Opsional)",
+    "saving": "Menyimpan...",
+    "add_to_gallery": "Tambah ke Galeri!",
+    "add_competition_btn": "Tambah Lomba!",
+    "share_art_title": "Bagikan Karyamu! 🎉",
+    "share_art_desc": "Siapapun yang memiliki link ini bisa melihat karyamu",
+    "share_comp_title": "Bagikan Pencapaian! 🎉",
+    "share_comp_desc": "Tunjukkan pencapaian luar biasamu ke semua orang",
+    "copied": "Disalin",
+    "what_to_add": "Apa yang ingin ditambahkan?",
+    "new_artwork": "Karya Seni Baru",
+    "new_artwork_desc": "Tambah gambar, lukisan, atau kreasi",
+    "new_comp": "Lomba Baru",
+    "new_comp_desc": "Catat lombamu di sini",
+    "share_not_found": "Tautan berbagi tidak ditemukan atau sudah kadaluarsa.",
+    "item_not_found": "Karya atau lomba tidak ditemukan. Pastikan sudah diatur ke publik.",
+    "back_home": "Kembali ke Beranda",
+    "create_portfolio": "Buat Portofoliomu Sendiri!",
+    "loading": "Sabar ya, sedang memuat...",
+    "oops": "Waduh!"
   },
   "auth": {
     "welcome": "Selamat Datang di ArtStar!",

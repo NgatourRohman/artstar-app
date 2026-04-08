@@ -125,7 +125,7 @@ export default function Timeline() {
                     background: `${config.color}15`,
                     color: config.color,
                   }}>
-                    {config.label}
+                    {t(`timeline.type.${item.type}`)}
                   </span>
                 </div>
                 <div className="timeline-item-title mt-sm">

@@ -4,7 +4,7 @@
     "gallery": "Gallery",
     "add": "Add",
     "compete": "Compete",
-    "me": "Me",
+    "me": "Profile",
     "create": "Create"
   },
   "dashboard": {
@@ -43,7 +43,12 @@
     "cancel": "Cancel",
     "change_avatar": "Change Avatar",
     "select_avatar": "Select an avatar",
-    "change_name": "Change Name"
+    "change_name": "Change Name",
+    "settings": "Settings",
+    "change_name_avatar": "Change name & avatar",
+    "earned": "{{count}} earned",
+    "see_journey": "See your journey",
+    "see_you_later": "See you later!"
   },
   "badges": {
     "title": "My Badges",
@@ -57,7 +62,24 @@
       "first_win": { "name": "Champion!", "desc": "Win a competition — you are amazing!" },
       "five_competitions": { "name": "Competition Pro!", "desc": "Enter 5 competitions" },
       "colorful_creator": { "name": "Colorful Creator!", "desc": "Create artworks in 3 different styles" },
-      "streak_3": { "name": "On Fire!", "desc": "Upload 3 artworks in one week" }
+      "streak_3": { "name": "On Fire!", "desc": "Upload 3 artworks in one week" },
+      "twenty_artworks": { "name": "Art Collector", "desc": "Added 20 artworks" },
+      "fifty_artworks": { "name": "Master Artist", "desc": "Added 50 artworks" },
+      "hundred_artworks": { "name": "Art Legend", "desc": "Added 100 artworks" },
+      "ten_competitions": { "name": "Veteran Challenger", "desc": "Participated in 10 competitions" },
+      "master_creator": { "name": "Renaissance Artist", "desc": "Mastered 5 art categories" },
+      "persistent_artist": { "name": "Unstoppable", "desc": "10 weeks streak!" },
+      "two_artworks": { "name": "First Steps", "desc": "Added your second artwork" },
+      "thirty_artworks": { "name": "Dedicated Artist", "desc": "Added 30 artworks" },
+      "seventy_five_artworks": { "name": "Art Prodigy", "desc": "Added 75 artworks" },
+      "two_competitions": { "name": "Stepping Up", "desc": "Participated in 2 competitions" },
+      "twenty_competitions": { "name": "Fearless Competitor", "desc": "Participated in 20 competitions" },
+      "fifty_competitions": { "name": "Tournament Master", "desc": "Participated in 50 competitions" },
+      "two_categories": { "name": "Exploring Styles", "desc": "Mastered 2 art categories" },
+      "four_categories": { "name": "Versatile Artist", "desc": "Mastered 4 art categories" },
+      "six_categories": { "name": "Art Polymath", "desc": "Mastered 6 art categories" },
+      "streak_5": { "name": "Consistent Creator", "desc": "5 weeks streak!" },
+      "streak_20": { "name": "Unbreakable Habit", "desc": "20 weeks streak!" }
     }
   },
   "competitions": {
@@ -77,11 +99,16 @@
     "entered_competition": "Entered a competition",
     "earned_badge": "Earned a new badge!",
     "empty_title": "Your journey begins now!",
-    "empty_subtitle": "Add artworks to see them here"
+    "empty_subtitle": "Add artworks to see them here",
+    "type": {
+      "artwork": "Artwork",
+      "competition": "Competition",
+      "badge": "Badge"
+    }
   },
   "common": {
-    "add_artwork": "+ Add Artwork",
-    "add_competition": "+ Add Competition",
+    "add_artwork": "Add Artwork",
+    "add_competition": "Add Competition",
     "share": "Share",
     "delete": "Delete",
     "title": "Title",
@@ -92,7 +119,26 @@
     "upload_image": "Tap or drag to upload an image",
     "name": "Name",
     "result": "Result",
-    "upload_certificate": "Upload Certificate (Optional)"
+    "upload_certificate": "Upload Certificate (Optional)",
+    "saving": "Saving...",
+    "add_to_gallery": "Add to Gallery!",
+    "add_competition_btn": "Add Competition!",
+    "share_art_title": "Share Your Art! 🎉",
+    "share_art_desc": "Anyone with this link can see your artwork",
+    "share_comp_title": "Share Achievement! 🎉",
+    "share_comp_desc": "Show everyone your amazing achievement",
+    "copied": "Copied",
+    "what_to_add": "What do you want to add?",
+    "new_artwork": "New Artwork",
+    "new_artwork_desc": "Add a drawing, painting, or creation",
+    "new_comp": "New Competition",
+    "new_comp_desc": "Track a contest or art event",
+    "share_not_found": "Share link not found or expired.",
+    "item_not_found": "Artwork or competition not found. Make sure it's set to public.",
+    "back_home": "Back to Home",
+    "create_portfolio": "Create Your Own Portfolio!",
+    "loading": "Wait a moment, loading...",
+    "oops": "Oops!"
   },
   "auth": {
     "welcome": "Welcome to ArtStar!",

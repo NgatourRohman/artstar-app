@@ -1,7 +1,9 @@
 import { useState, useRef } from 'react';
 import { Camera, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function ImageUploader({ onImageSelect, preview, onClear }) {
+  const { t } = useTranslation();
   const [previewUrl, setPreviewUrl] = useState(preview || null);
   const inputRef = useRef(null);
 
@@ -52,7 +54,7 @@ export default function ImageUploader({ onImageSelect, preview, onClear }) {
           <div className="image-uploader-icon">
             <Camera size={40} />
           </div>
-          <p className="image-uploader-text">Tap to add a photo! 📸</p>
+          <p className="image-uploader-text">{t('common.upload_image')} 📸</p>
         </>
       )}
       <input

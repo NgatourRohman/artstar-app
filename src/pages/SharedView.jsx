@@ -30,7 +30,7 @@ export default function SharedView() {
           .eq('id', shareId)
           .single();
 
-        if (shareError) throw new Error('Share link not found or expired');
+        if (shareError) throw new Error(t('common.share_not_found', 'Tautan berbagi tidak ditemukan atau sudah kadaluarsa.'));
 
         // Fetch the actual item
         const table = share.item_type === 'artwork' ? 'artworks' : 'competitions';
@@ -40,7 +40,7 @@ export default function SharedView() {
           .eq('id', share.item_id)
           .single();
 
-        if (itemError) throw new Error('Item not found');
+        if (itemError) throw new Error(t('common.item_not_found', 'Karya atau lomba tidak ditemukan. Pastikan sudah diatur ke publik.'));
 
         setItem(itemData);
         setType(share.item_type);
@@ -52,16 +52,16 @@ export default function SharedView() {
     }
 
     fetchSharedItem();
-  }, [shareId]);
+  }, [shareId, t]);
 
   if (loading) {
     return (
       <div className="shared-view">
         <div className="shared-view-brand">✨ ArtStar</div>
-        <div className="text-center" style={{ fontSize: '3rem', animation: 'pulse 1.5s infinite' }}>
+        <div className="text-center" style={{ fontSize: '3rem', animation: 'pulse 2s infinite' }}>
           🎨
         </div>
-        <p style={{ color: 'var(--color-text-secondary)', marginTop: 16 }}>{t('common.loading', 'Loading...')}</p>
+        <p style={{ color: 'var(--color-text-secondary)', marginTop: 16 }}>{t('common.loading', 'Sabar ya, sedang memuat...')}</p>
       </div>
     );
   }
@@ -71,9 +71,10 @@ export default function SharedView() {
       <div className="shared-view">
         <div className="shared-view-brand">✨ ArtStar</div>
         <div className="empty-state">
-          <div className="empty-state-icon">😔</div>
-          <h3 className="empty-state-title">Oops!</h3>
+          <div className="empty-state-icon">💫</div>
+          <h3 className="empty-state-title">{t('common.oops', 'Waduh!')}</h3>
           <p className="empty-state-desc">{error}</p>
+          <a href="/" className="btn btn-primary mt-lg">{t('common.back_home', 'Kembali ke Beranda')}</a>
         </div>
       </div>
     );

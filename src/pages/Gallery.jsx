@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { Plus, Share2, Trash2, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -46,6 +47,7 @@ export default function Gallery() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('drawing');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [imageFile, setImageFile] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -66,7 +68,7 @@ export default function Gallery() {
     if (!title.trim()) return;
     
     setSaving(true);
-    const { data, error } = await addArtwork({ title, description, category, imageFile });
+    const { data, error } = await addArtwork({ title, description, category, imageFile, date });
     setSaving(false);
 
     if (!error && data) {
@@ -74,6 +76,7 @@ export default function Gallery() {
       setTitle('');
       setDescription('');
       setCategory('drawing');
+      setDate(new Date().toISOString().split('T')[0]);
       setImageFile(null);
 
       // Check badges
@@ -201,7 +204,7 @@ export default function Gallery() {
       )}
 
       {/* Add Form Modal */}
-      {showAddForm && (
+      {showAddForm && createPortal(
         <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
@@ -219,9 +222,21 @@ export default function Gallery() {
                   id="art-title"
                   type="text"
                   className="form-input"
-                  placeholder="My awesome drawing!"
+                  placeholder={t('common.title')}
                   value={title}
                   onChange={e => setTitle(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="art-date">{t('common.date')}</label>
+                <input
+                  id="art-date"
+                  type="date"
+                  className="form-input"
+                  value={date}
+                  onChange={e => setDate(e.target.value)}
                   required
                 />
               </div>
@@ -247,7 +262,7 @@ export default function Gallery() {
                 <textarea
                   id="art-desc"
                   className="form-textarea"
-                  placeholder="Tell us about your artwork..."
+                  placeholder={t('common.description')}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   rows={3}
@@ -255,15 +270,16 @@ export default function Gallery() {
               </div>
 
               <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={saving}>
-                {saving ? '✨ Saving...' : '🚀 Add to Gallery!'}
+                {saving ? `✨ ${t('common.saving')}` : `🚀 ${t('common.add_to_gallery')}`}
               </button>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Artwork Detail Modal */}
-      {selectedArtwork && (
+      {selectedArtwork && createPortal(
         <div className="modal-overlay" onClick={() => setSelectedArtwork(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
@@ -319,17 +335,18 @@ export default function Gallery() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Share Modal */}
-      {showShareModal && shareUrl && (
+      {showShareModal && shareUrl && createPortal(
         <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
-            <h2 className="modal-title">Share Your Art! 🎉</h2>
+            <h2 className="modal-title">{t('common.share_art_title')}</h2>
             <p className="text-center" style={{ color: 'var(--color-text-secondary)', marginBottom: 16 }}>
-              Anyone with this link can see your artwork
+              {t('common.share_art_desc')}
             </p>
             <div className="share-link-box">
               <input
@@ -339,11 +356,12 @@ export default function Gallery() {
                 readOnly
               />
               <button className="btn btn-primary btn-sm" onClick={handleCopy}>
-                {copied ? '✅' : '📋'}
+                {copied ? `✅ ${t('common.copied')}` : '📋'}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

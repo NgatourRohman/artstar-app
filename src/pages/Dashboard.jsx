@@ -148,10 +148,10 @@ export default function Dashboard() {
         <div className="text-center mt-xl">
           <div style={{ fontSize: '4rem', marginBottom: 16 }}>🎨</div>
           <h2 style={{ fontFamily: 'var(--font-display)', marginBottom: 8 }}>
-            Start Your Art Journey!
+            {t('gallery.empty_title')}
           </h2>
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: 24, fontSize: 'var(--text-sm)' }}>
-            Upload your first artwork and earn your first badge!
+            {t('gallery.empty_subtitle')}
           </p>
           <button className="btn btn-primary btn-lg" onClick={() => navigate('/gallery?add=true')}>
             <Sparkles size={20} /> {t('common.add_artwork')}

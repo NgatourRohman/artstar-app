@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Award, Clock, Settings, Globe } from 'lucide-react';
+import { LogOut, Award, Clock, Settings, Globe, Palette, Trophy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../hooks/useProfile';
@@ -71,18 +72,47 @@ export default function Profile() {
       </div>
 
       {/* Stats */}
-      <div className="profile-stats">
-        <div className="profile-stat" onClick={() => navigate('/gallery')} style={{ cursor: 'pointer' }}>
-          <div className="profile-stat-value">{artworks.length}</div>
-          <div className="profile-stat-label">{t('dashboard.artworks_count')}</div>
+      <div className="stats-row mt-xl">
+        <div 
+          className="stat-card" 
+          onClick={() => navigate('/gallery')}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #DDD6FE, #A78BFA)' }}>
+            <Palette size={22} color="#7C3AED" />
+          </div>
+          <div className="stat-card-value" style={{ color: '#7C3AED' }}>
+            {artworks.length}
+          </div>
+          <div className="stat-card-label">{t('dashboard.artworks_count')}</div>
         </div>
-        <div className="profile-stat" onClick={() => navigate('/competitions')} style={{ cursor: 'pointer' }}>
-          <div className="profile-stat-value">{competitions.length}</div>
-          <div className="profile-stat-label">{t('dashboard.competitions_count')}</div>
+
+        <div 
+          className="stat-card"
+          onClick={() => navigate('/competitions')}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #FDE68A, #F59E0B)' }}>
+            <Trophy size={22} color="#92400E" />
+          </div>
+          <div className="stat-card-value" style={{ color: '#F59E0B' }}>
+            {competitions.length}
+          </div>
+          <div className="stat-card-label">{t('dashboard.competitions_count')}</div>
         </div>
-        <div className="profile-stat" onClick={() => navigate('/badges')} style={{ cursor: 'pointer' }}>
-          <div className="profile-stat-value">{badgeCount}</div>
-          <div className="profile-stat-label">{t('dashboard.badges_count')}</div>
+
+        <div 
+          className="stat-card"
+          onClick={() => navigate('/badges')}
+          style={{ cursor: 'pointer' }}
+        >
+          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #FECDD3, #FB7185)' }}>
+            <Award size={22} color="#BE123C" />
+          </div>
+          <div className="stat-card-value" style={{ color: '#EC4899' }}>
+            {badgeCount}
+          </div>
+          <div className="stat-card-label">{t('dashboard.badges_count')}</div>
         </div>
       </div>
 
@@ -93,12 +123,12 @@ export default function Profile() {
           onClick={() => navigate('/badges')}
           style={{ cursor: 'pointer', border: 'none', textAlign: 'left' }}
         >
-          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #FDE68A, #F59E0B)' }}>
-            <Award size={22} color="#92400E" />
+          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #FECDD3, #FB7185)' }}>
+            <Award size={22} color="#BE123C" />
           </div>
           <div className="stat-card-info">
             <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('badges.title')}</span>
-            <span className="stat-card-label">{badgeCount} earned</span>
+            <span className="stat-card-label">{t('profile.earned', { count: badgeCount })}</span>
           </div>
         </button>
 
@@ -112,7 +142,7 @@ export default function Profile() {
           </div>
           <div className="stat-card-info">
             <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('timeline.title')}</span>
-            <span className="stat-card-label">See your journey</span>
+            <span className="stat-card-label">{t('profile.see_journey')}</span>
           </div>
         </button>
 
@@ -125,8 +155,8 @@ export default function Profile() {
             <Settings size={22} color="#065F46" />
           </div>
           <div className="stat-card-info">
-            <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>Settings</span>
-            <span className="stat-card-label">Change name & avatar</span>
+            <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('profile.settings')}</span>
+            <span className="stat-card-label">{t('profile.change_name_avatar')}</span>
           </div>
         </button>
 
@@ -141,18 +171,18 @@ export default function Profile() {
             </div>
             <div className="stat-card-info">
               <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('profile.sign_out')}</span>
-              <span className="stat-card-label">See you later!</span>
+              <span className="stat-card-label">{t('profile.see_you_later')}</span>
             </div>
           </button>
         )}
       </div>
 
       {/* Settings Modal */}
-      {showSettings && (
+      {showSettings && createPortal(
         <div className="modal-overlay" onClick={() => setShowSettings(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-handle" />
-            <h2 className="modal-title">Settings ⚙️</h2>
+            <h2 className="modal-title">{t('profile.settings')} ⚙️</h2>
 
             <div className="form-group">
               <label className="form-label">{t('profile.language')}</label>
@@ -204,7 +234,8 @@ export default function Profile() {
               ✨ {t('profile.save')}
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

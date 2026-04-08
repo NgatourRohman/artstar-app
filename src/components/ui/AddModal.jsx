@@ -1,11 +1,15 @@
 import { Palette, Trophy } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function AddModal({ onClose, onSelectArtwork, onSelectCompetition }) {
-  return (
+  const { t } = useTranslation();
+
+  return createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-handle" />
-        <h2 className="modal-title">What do you want to add? ✨</h2>
+        <h2 className="modal-title">{t('common.what_to_add')} ✨</h2>
         
         <div className="flex flex-col gap-md">
           <button 
@@ -18,8 +22,8 @@ export default function AddModal({ onClose, onSelectArtwork, onSelectCompetition
               <Palette size={24} color="#7C3AED" />
             </div>
             <div className="stat-card-info">
-              <span className="stat-card-value" style={{ fontSize: '1.2rem' }}>New Artwork</span>
-              <span className="stat-card-label">Add a drawing, painting, or creation</span>
+              <span className="stat-card-value" style={{ fontSize: '1.2rem' }}>{t('common.new_artwork')}</span>
+              <span className="stat-card-label">{t('common.new_artwork_desc')}</span>
             </div>
           </button>
 
@@ -33,12 +37,13 @@ export default function AddModal({ onClose, onSelectArtwork, onSelectCompetition
               <Trophy size={24} color="#92400E" />
             </div>
             <div className="stat-card-info">
-              <span className="stat-card-value" style={{ fontSize: '1.2rem' }}>New Competition</span>
-              <span className="stat-card-label">Track a contest or art event</span>
+              <span className="stat-card-value" style={{ fontSize: '1.2rem' }}>{t('common.new_comp')}</span>
+              <span className="stat-card-label">{t('common.new_comp_desc')}</span>
             </div>
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

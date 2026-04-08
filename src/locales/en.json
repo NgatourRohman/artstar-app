@@ -8,9 +8,10 @@
     "create": "Create"
   },
   "dashboard": {
-    "greeting": "Good Evening, {{name}}!",
+    "greeting": "Good Night, {{name}}!",
     "greeting_morning": "Good Morning, {{name}}!",
     "greeting_afternoon": "Good Afternoon, {{name}}!",
+    "greeting_evening": "Good Evening, {{name}}!",
     "subtitle": "Ready to create something amazing today?",
     "artworks_count": "Artworks",
     "competitions_count": "Competitions",

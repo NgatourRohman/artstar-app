@@ -43,7 +43,8 @@ export default function Dashboard() {
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return t('dashboard.greeting_morning', { name: artistName });
-    if (hour < 17) return t('dashboard.greeting_afternoon', { name: artistName });
+    if (hour < 15) return t('dashboard.greeting_afternoon', { name: artistName });
+    if (hour < 18) return t('dashboard.greeting_evening', { name: artistName });
     return t('dashboard.greeting', { name: artistName });
   };
 

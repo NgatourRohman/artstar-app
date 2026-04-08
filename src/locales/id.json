@@ -11,6 +11,7 @@
     "greeting": "Selamat Malam, {{name}}!",
     "greeting_morning": "Selamat Pagi, {{name}}!",
     "greeting_afternoon": "Selamat Siang, {{name}}!",
+    "greeting_evening": "Selamat Sore, {{name}}!",
     "subtitle": "Siap membuat sesuatu yang luar biasa hari ini?",
     "artworks_count": "Karya",
     "competitions_count": "Lomba",

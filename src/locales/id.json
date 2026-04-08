@@ -1,0 +1,110 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "gallery": "Galeri",
+    "add": "Tambah",
+    "compete": "Lomba",
+    "me": "Saya",
+    "create": "Buat"
+  },
+  "dashboard": {
+    "greeting": "Selamat Malam, {{name}}!",
+    "greeting_morning": "Selamat Pagi, {{name}}!",
+    "greeting_afternoon": "Selamat Siang, {{name}}!",
+    "subtitle": "Siap membuat sesuatu yang luar biasa hari ini?",
+    "artworks_count": "Karya",
+    "competitions_count": "Lomba",
+    "badges_count": "Lencana",
+    "latest_badge": "LENCANA TERBARU",
+    "recent_artworks": "Karya Terbaru",
+    "see_all": "Semua"
+  },
+  "gallery": {
+    "title": "Galeri Saya",
+    "all": "Semua",
+    "categories": {
+      "drawing": "Menggambar",
+      "painting": "Melukis",
+      "coloring": "Mewarnai",
+      "digital": "Digital",
+      "craft": "Kerajinan",
+      "other": "Lainnya"
+    },
+    "empty_title": "Wah, masih kosong di sini!",
+    "empty_subtitle": "Ayo tambahkan mahakarya pertamamu!"
+  },
+  "profile": {
+    "member_since": "Anggota sejak {{date}}",
+    "language": "Bahasa / Language",
+    "english": "English",
+    "indonesian": "Indonesian",
+    "sign_out": "Keluar",
+    "save": "Simpan Perubahan",
+    "cancel": "Batal",
+    "change_avatar": "Ganti Avatar",
+    "select_avatar": "Pilih avatar",
+    "change_name": "Ganti Nama"
+  },
+  "badges": {
+    "title": "Lencana Saya",
+    "unlocked_count": "{{unlocked}} dari {{total}} terbuka",
+    "locked_desc": "Terus semangat!",
+    "list": {
+      "first_artwork": { "name": "Karya Pertama!", "desc": "Unggah karya pertamamu" },
+      "five_artworks": { "name": "Mesin Seni!", "desc": "Unggah 5 karya luar biasa" },
+      "ten_artworks": { "name": "Bintang Galeri!", "desc": "Unggah 10 karya yang menakjubkan" },
+      "first_competition": { "name": "Seniman Pemberani!", "desc": "Ikuti lomba pertamamu" },
+      "first_win": { "name": "Sang Juara!", "desc": "Menang lomba — kamu luar biasa!" },
+      "five_competitions": { "name": "Ahli Lomba!", "desc": "Ikuti 5 perlombaan" },
+      "colorful_creator": { "name": "Kreator Warna-warni!", "desc": "Buat 3 gaya karya yang berbeda" },
+      "streak_3": { "name": "Membara!", "desc": "Unggah 3 karya dalam satu minggu" }
+    }
+  },
+  "competitions": {
+    "title": "Lomba Saya",
+    "results": {
+      "participated": "Peserta",
+      "finalist": "Finalis",
+      "winner": "Juara",
+      "grand_winner": "Juara Umum"
+    },
+    "empty_title": "Belum ada lomba!",
+    "empty_subtitle": "Waktunya tunjukkan senimu ke dunia!"
+  },
+  "timeline": {
+    "title": "Perjalanan Seniku",
+    "uploaded_artwork": "Mengunggah karya seni",
+    "entered_competition": "Mengikuti perlombaan",
+    "earned_badge": "Mendapat lencana baru!",
+    "empty_title": "Perjalananmu dimulai sekarang!",
+    "empty_subtitle": "Tambahkan karya seni untuk melihatnya di sini"
+  },
+  "common": {
+    "add_artwork": "+ Tambah Karya",
+    "add_competition": "+ Tambah Lomba",
+    "share": "Bagikan",
+    "delete": "Hapus",
+    "title": "Judul",
+    "description": "Deskripsi",
+    "category": "Kategori",
+    "no_category": "Pilih kategori",
+    "date": "Tanggal",
+    "upload_image": "Ketuk atau seret untuk unggah gambar",
+    "name": "Nama",
+    "result": "Hasil",
+    "upload_certificate": "Unggah Piagam (Opsional)"
+  },
+  "auth": {
+    "welcome": "Selamat Datang di ArtStar!",
+    "subtitle": "Mari buat sesuatu yang indah hari ini",
+    "sign_in": "Masuk",
+    "sign_up": "Daftar",
+    "email": "Alamat Email",
+    "password": "Kata Sandi",
+    "no_account": "Belum punya akun?",
+    "has_account": "Sudah punya akun?",
+    "get_started": "Mulai",
+    "logging_in": "Masuk...",
+    "signing_up": "Mendaftar akun..."
+  }
+}

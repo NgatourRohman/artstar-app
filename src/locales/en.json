@@ -1,0 +1,110 @@
+{
+  "nav": {
+    "home": "Home",
+    "gallery": "Gallery",
+    "add": "Add",
+    "compete": "Compete",
+    "me": "Me",
+    "create": "Create"
+  },
+  "dashboard": {
+    "greeting": "Good Evening, {{name}}!",
+    "greeting_morning": "Good Morning, {{name}}!",
+    "greeting_afternoon": "Good Afternoon, {{name}}!",
+    "subtitle": "Ready to create something amazing today?",
+    "artworks_count": "Artworks",
+    "competitions_count": "Competitions",
+    "badges_count": "Badges",
+    "latest_badge": "LATEST BADGE",
+    "recent_artworks": "Recent Artworks",
+    "see_all": "See All"
+  },
+  "gallery": {
+    "title": "My Gallery",
+    "all": "All",
+    "categories": {
+      "drawing": "Drawing",
+      "painting": "Painting",
+      "coloring": "Coloring",
+      "digital": "Digital",
+      "craft": "Craft",
+      "other": "Other"
+    },
+    "empty_title": "It looks a little empty here!",
+    "empty_subtitle": "Let's add your first masterpiece!"
+  },
+  "profile": {
+    "member_since": "Member since {{date}}",
+    "language": "Language / Bahasa",
+    "english": "English",
+    "indonesian": "Indonesian",
+    "sign_out": "Sign Out",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "change_avatar": "Change Avatar",
+    "select_avatar": "Select an avatar",
+    "change_name": "Change Name"
+  },
+  "badges": {
+    "title": "My Badges",
+    "unlocked_count": "{{unlocked}} of {{total}} unlocked",
+    "locked_desc": "Keep going!",
+    "list": {
+      "first_artwork": { "name": "First Masterpiece!", "desc": "Upload your very first artwork" },
+      "five_artworks": { "name": "Art Machine!", "desc": "Upload 5 amazing artworks" },
+      "ten_artworks": { "name": "Gallery Star!", "desc": "Upload 10 incredible artworks" },
+      "first_competition": { "name": "Brave Artist!", "desc": "Enter your first competition" },
+      "first_win": { "name": "Champion!", "desc": "Win a competition — you are amazing!" },
+      "five_competitions": { "name": "Competition Pro!", "desc": "Enter 5 competitions" },
+      "colorful_creator": { "name": "Colorful Creator!", "desc": "Create artworks in 3 different styles" },
+      "streak_3": { "name": "On Fire!", "desc": "Upload 3 artworks in one week" }
+    }
+  },
+  "competitions": {
+    "title": "My Competitions",
+    "results": {
+      "participated": "Participated",
+      "finalist": "Finalist",
+      "winner": "Winner",
+      "grand_winner": "Grand Winner"
+    },
+    "empty_title": "No competitions yet!",
+    "empty_subtitle": "Time to show the world your art!"
+  },
+  "timeline": {
+    "title": "My Art Journey",
+    "uploaded_artwork": "Uploaded an artwork",
+    "entered_competition": "Entered a competition",
+    "earned_badge": "Earned a new badge!",
+    "empty_title": "Your journey begins now!",
+    "empty_subtitle": "Add artworks to see them here"
+  },
+  "common": {
+    "add_artwork": "+ Add Artwork",
+    "add_competition": "+ Add Competition",
+    "share": "Share",
+    "delete": "Delete",
+    "title": "Title",
+    "description": "Description",
+    "category": "Category",
+    "no_category": "Select a category",
+    "date": "Date",
+    "upload_image": "Tap or drag to upload an image",
+    "name": "Name",
+    "result": "Result",
+    "upload_certificate": "Upload Certificate (Optional)"
+  },
+  "auth": {
+    "welcome": "Welcome to ArtStar!",
+    "subtitle": "Let's create something beautiful today",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "email": "Email address",
+    "password": "Password",
+    "no_account": "Don't have an account?",
+    "has_account": "Already have an account?",
+    "get_started": "Get Started",
+    "logging_in": "Signing in...",
+    "signing_up": "Creating account..."
+  }
+}

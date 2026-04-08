@@ -1,0 +1,211 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { LogOut, Award, Clock, Settings, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
+import { useProfile } from '../hooks/useProfile';
+import { useArtworks } from '../hooks/useArtworks';
+import { useCompetitions } from '../hooks/useCompetitions';
+import { useBadges } from '../hooks/useBadges';
+import { DEMO_PROFILE } from '../lib/demoData';
+
+const AVATAR_OPTIONS = [
+  '🦄', '🐱', '🐶', '🦊', '🐼',
+  '🐰', '🦁', '🐸', '🐧', '🦋',
+  '🌟', '🌈', '🎨', '🚀', '💎',
+  '🌸', '🎵', '🍦', '🐝', '🦕',
+];
+
+export default function Profile() {
+  const navigate = useNavigate();
+  const { signOut, isDemoMode } = useAuth();
+  const { profile, fetchProfile, updateProfile } = useProfile();
+  const { artworks } = useArtworks();
+  const { competitions } = useCompetitions();
+  const { badgeCount } = useBadges();
+  const { t, i18n } = useTranslation();
+
+  const [showSettings, setShowSettings] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editAvatar, setEditAvatar] = useState('');
+
+  const displayProfile = isDemoMode ? DEMO_PROFILE : profile;
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  useEffect(() => {
+    if (displayProfile) {
+      setEditName(displayProfile.display_name || '');
+      setEditAvatar(displayProfile.avatar_url || '🦄');
+    }
+  }, [displayProfile]);
+
+  const handleSaveSettings = () => {
+    updateProfile({ display_name: editName, avatar_url: editAvatar });
+    setShowSettings(false);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/login');
+  };
+
+  const memberSince = displayProfile?.created_at
+    ? new Date(displayProfile.created_at).toLocaleDateString('en-US', {
+        month: 'long',
+        year: 'numeric',
+      })
+    : 'Recently';
+
+  return (
+    <div className="page-enter">
+      {/* Profile Header */}
+      <div className="profile-header">
+        <div className="profile-avatar">
+          {displayProfile?.avatar_url || '🦄'}
+        </div>
+        <h1 className="profile-name">{displayProfile?.display_name || 'Little Artist'}</h1>
+        <p className="profile-since">⭐ {t('profile.member_since', { date: memberSince })}</p>
+      </div>
+
+      {/* Stats */}
+      <div className="profile-stats">
+        <div className="profile-stat" onClick={() => navigate('/gallery')} style={{ cursor: 'pointer' }}>
+          <div className="profile-stat-value">{artworks.length}</div>
+          <div className="profile-stat-label">{t('dashboard.artworks_count')}</div>
+        </div>
+        <div className="profile-stat" onClick={() => navigate('/competitions')} style={{ cursor: 'pointer' }}>
+          <div className="profile-stat-value">{competitions.length}</div>
+          <div className="profile-stat-label">{t('dashboard.competitions_count')}</div>
+        </div>
+        <div className="profile-stat" onClick={() => navigate('/badges')} style={{ cursor: 'pointer' }}>
+          <div className="profile-stat-value">{badgeCount}</div>
+          <div className="profile-stat-label">{t('dashboard.badges_count')}</div>
+        </div>
+      </div>
+
+      {/* Menu Items */}
+      <div className="flex flex-col gap-sm mt-xl">
+        <button
+          className="stat-card"
+          onClick={() => navigate('/badges')}
+          style={{ cursor: 'pointer', border: 'none', textAlign: 'left' }}
+        >
+          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #FDE68A, #F59E0B)' }}>
+            <Award size={22} color="#92400E" />
+          </div>
+          <div className="stat-card-info">
+            <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('badges.title')}</span>
+            <span className="stat-card-label">{badgeCount} earned</span>
+          </div>
+        </button>
+
+        <button
+          className="stat-card"
+          onClick={() => navigate('/timeline')}
+          style={{ cursor: 'pointer', border: 'none', textAlign: 'left' }}
+        >
+          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #DDD6FE, #A78BFA)' }}>
+            <Clock size={22} color="#7C3AED" />
+          </div>
+          <div className="stat-card-info">
+            <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('timeline.title')}</span>
+            <span className="stat-card-label">See your journey</span>
+          </div>
+        </button>
+
+        <button
+          className="stat-card"
+          onClick={() => setShowSettings(true)}
+          style={{ cursor: 'pointer', border: 'none', textAlign: 'left' }}
+        >
+          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #D1FAE5, #10B981)' }}>
+            <Settings size={22} color="#065F46" />
+          </div>
+          <div className="stat-card-info">
+            <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>Settings</span>
+            <span className="stat-card-label">Change name & avatar</span>
+          </div>
+        </button>
+
+        {!isDemoMode && (
+          <button
+            className="stat-card"
+            onClick={handleLogout}
+            style={{ cursor: 'pointer', border: 'none', textAlign: 'left' }}
+          >
+            <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #FECDD3, #FB7185)' }}>
+              <LogOut size={22} color="#BE123C" />
+            </div>
+            <div className="stat-card-info">
+              <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('profile.sign_out')}</span>
+              <span className="stat-card-label">See you later!</span>
+            </div>
+          </button>
+        )}
+      </div>
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="modal-overlay" onClick={() => setShowSettings(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-handle" />
+            <h2 className="modal-title">Settings ⚙️</h2>
+
+            <div className="form-group">
+              <label className="form-label">{t('profile.language')}</label>
+              <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
+                <button
+                  className={`btn ${i18n.resolvedLanguage === 'en' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1 }}
+                  onClick={() => i18n.changeLanguage('en')}
+                >
+                  🇬🇧 EN
+                </button>
+                <button
+                  className={`btn ${i18n.resolvedLanguage === 'id' ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ flex: 1 }}
+                  onClick={() => i18n.changeLanguage('id')}
+                >
+                  🇮🇩 ID
+                </button>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">{t('profile.change_avatar')}</label>
+              <div className="avatar-picker">
+                {AVATAR_OPTIONS.map(emoji => (
+                  <button
+                    key={emoji}
+                    className={`avatar-option ${editAvatar === emoji ? 'selected' : ''}`}
+                    onClick={() => setEditAvatar(emoji)}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="profile-name">{t('profile.change_name')}</label>
+              <input
+                id="profile-name"
+                type="text"
+                className="form-input"
+                value={editName}
+                onChange={e => setEditName(e.target.value)}
+              />
+            </div>
+
+            <button className="btn btn-primary btn-block btn-lg" onClick={handleSaveSettings}>
+              ✨ {t('profile.save')}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

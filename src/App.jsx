@@ -1,0 +1,75 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import AppShell from './components/layout/AppShell';
+import Dashboard from './pages/Dashboard';
+import Gallery from './pages/Gallery';
+import Competitions from './pages/Competitions';
+import Badges from './pages/Badges';
+import Timeline from './pages/Timeline';
+import Profile from './pages/Profile';
+import Login from './pages/Login';
+import SharedView from './pages/SharedView';
+
+function ProtectedRoute({ children }) {
+  const { session, isDemoMode } = useAuth();
+  if (!session && !isDemoMode) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
+function PublicRoute({ children }) {
+  const { session, isDemoMode } = useAuth();
+  if (session || isDemoMode) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* Public route — shared view */}
+      <Route path="/shared/:shareId" element={<SharedView />} />
+
+      {/* Auth routes */}
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+
+      {/* Protected routes with app shell */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppShell />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/competitions" element={<Competitions />} />
+        <Route path="/badges" element={<Badges />} />
+        <Route path="/timeline" element={<Timeline />} />
+        <Route path="/profile" element={<Profile />} />
+      </Route>
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}

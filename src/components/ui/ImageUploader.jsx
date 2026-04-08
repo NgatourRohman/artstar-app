@@ -11,40 +11,40 @@ export default function ImageUploader({ onImageSelect, preview, onClear }) {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Clean up previous preview URL to save memory
+    if (previewUrl && previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
     onImageSelect(file);
+    
+    // RESET input value so the same file can be selected again
+    e.target.value = '';
   };
 
   const handleClear = () => {
+    if (previewUrl && previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setPreviewUrl(null);
     if (inputRef.current) inputRef.current.value = '';
     onClear?.();
   };
 
   return (
-    <div className="image-uploader" onClick={() => !previewUrl && inputRef.current?.click()}>
+    <div className="image-uploader" onClick={() => inputRef.current?.click()}>
       {previewUrl ? (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
           <img src={previewUrl} alt="Preview" className="image-uploader-preview" />
+          <div className="image-uploader-replace-overlay">
+            <Camera size={24} />
+            <span>{t('common.change_image', 'Ganti Gambar')}</span>
+          </div>
           <button
             onClick={(e) => { e.stopPropagation(); handleClear(); }}
-            style={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              background: 'rgba(0,0,0,0.5)',
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-            aria-label="Remove image"
+            className="image-uploader-clear-btn"
           >
             <X size={16} />
           </button>
@@ -62,7 +62,8 @@ export default function ImageUploader({ onImageSelect, preview, onClear }) {
         type="file"
         accept="image/*"
         onChange={handleChange}
-        style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
+        onClick={(e) => e.stopPropagation()}
+        style={{ display: 'none' }}
       />
     </div>
   );

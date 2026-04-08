@@ -1209,6 +1209,11 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-bg-input);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
 }
 
 .image-uploader:hover {
@@ -1234,13 +1239,57 @@ h1, h2, h3, h4, h5, h6 {
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: var(--radius-lg);
+  display: block;
+}
+
+.image-uploader-replace-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(124, 58, 237, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  border-radius: var(--radius-lg);
+}
+
+.image-uploader:hover .image-uploader-replace-overlay {
+  opacity: 1;
+}
+
+.image-uploader-clear-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  alignItems: center;
+  justifyContent: center;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+  transition: transform var(--transition-fast);
+}
+
+.image-uploader-clear-btn:hover {
+  transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .image-uploader input[type="file"] {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
+  display: none;
 }
 
 /* ============================================

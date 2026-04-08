@@ -83,15 +83,37 @@ CREATE TABLE IF NOT EXISTS badges (
 -- Seed badge data
 INSERT INTO badges (id, name, description, icon, requirement_type, requirement_value)
 VALUES
-  ('first_artwork', 'First Masterpiece!', 'Upload your very first artwork', '🎨', 'artwork_count', 1),
-  ('five_artworks', 'Art Machine!', 'Upload 5 amazing artworks', '🖼️', 'artwork_count', 5),
-  ('ten_artworks', 'Gallery Star!', 'Upload 10 incredible artworks', '⭐', 'artwork_count', 10),
-  ('first_competition', 'Brave Artist!', 'Enter your first competition', '🏅', 'competition_count', 1),
-  ('first_win', 'Champion!', 'Win a competition — you are amazing!', '🏆', 'first_win', 1),
-  ('five_competitions', 'Competition Pro!', 'Enter 5 competitions', '🎯', 'competition_count', 5),
-  ('colorful_creator', 'Colorful Creator!', 'Create artworks in 3 different categories', '🌈', 'category_count', 3),
-  ('streak_3', 'On Fire!', 'Upload 3 artworks in one week', '🔥', 'weekly_streak', 3)
-ON CONFLICT (id) DO NOTHING;
+  ('first_artwork', 'Masterpiece Pertama!', 'Unggah karya seni pertamamu', '🎨', 'artwork_count', 1),
+  ('two_artworks', 'Mulai Beraksi!', 'Unggah 2 karya seni', '🖌️', 'artwork_count', 2),
+  ('five_artworks', 'Mesin Seni!', 'Unggah 5 karya seni luar biasa', '🖼️', 'artwork_count', 5),
+  ('ten_artworks', 'Bintang Galeri!', 'Unggah 10 karya seni luar biasa', '⭐', 'artwork_count', 10),
+  ('twenty_artworks', 'Kolektor Berlian!', 'Unggah 20 karya seni', '💎', 'artwork_count', 20),
+  ('thirty_artworks', 'Seniman Berkilau!', 'Unggah 30 karya seni', '🌟', 'artwork_count', 30),
+  ('fifty_artworks', 'Raja/Ratu Galeri!', 'Unggah 50 karya seni', '👑', 'artwork_count', 50),
+  ('seventy_five_artworks', 'Legenda Seni!', 'Unggah 75 karya seni', '🔮', 'artwork_count', 75),
+  ('hundred_artworks', 'Penguasa Alam Semesta Seni!', 'Unggah 100 karya seni', '🌌', 'artwork_count', 100),
+  ('first_competition', 'Seniman Pemberani!', 'Ikuti lomba pertamamu', '🏅', 'competition_count', 1),
+  ('two_competitions', 'Petarung Lomba!', 'Ikuti 2 lomba', '🥈', 'competition_count', 2),
+  ('five_competitions', 'Pro Kompetisi!', 'Ikuti 5 lomba', '🎯', 'competition_count', 5),
+  ('ten_competitions', 'Ksatria Lomba!', 'Ikuti 10 lomba', '⚔️', 'competition_count', 10),
+  ('twenty_competitions', 'Benteng Prestasi!', 'Ikuti 20 lomba', '🛡️', 'competition_count', 20),
+  ('fifty_competitions', 'Bintang Jatuh Prestasi!', 'Ikuti 50 lomba', '🌠', 'competition_count', 50),
+  ('first_win', 'Juara!', 'Menangkan lomba — kamu luar biasa!', '🏆', 'first_win', 1),
+  ('two_categories', 'Penjelajah Seni!', 'Buat karya di 2 kategori berbeda', '🎭', 'category_count', 2),
+  ('colorful_creator', 'Kreator Penuh Warna!', 'Buat karya di 3 kategori berbeda', '🌈', 'category_count', 3),
+  ('four_categories', 'Ahli Ragam Seni!', 'Buat karya di 4 kategori berbeda', '🧩', 'category_count', 4),
+  ('master_creator', 'Master Segala Kategori!', 'Buat karya di 5 kategori berbeda', '🎆', 'category_count', 5),
+  ('six_categories', 'Dewa Kreativitas!', 'Buat karya di 6 kategori berbeda', '🏅', 'category_count', 6),
+  ('streak_3', 'Lagi On Fire!', 'Unggah 3 karya dalam satu minggu', '🔥', 'weekly_streak', 3),
+  ('streak_5', 'Gunung Berapi!', 'Unggah 5 karya dalam satu minggu', '🌋', 'weekly_streak', 5),
+  ('persistent_artist', 'Artis Gigih!', 'Unggah 10 karya dalam satu minggu', '🚀', 'weekly_streak', 10),
+  ('streak_20', 'Komet Kreativitas!', 'Unggah 20 karya dalam satu minggu', '☄️', 'weekly_streak', 20)
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  icon = EXCLUDED.icon,
+  requirement_type = EXCLUDED.requirement_type,
+  requirement_value = EXCLUDED.requirement_value;
 
 -- ============================================
 -- USER BADGES TABLE

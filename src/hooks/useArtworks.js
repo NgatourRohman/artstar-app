@@ -3,6 +3,7 @@ import { supabase, isDemoMode } from '../lib/supabase';
 import { DEMO_ARTWORKS } from '../lib/demoData';
 import { useAuth } from '../context/AuthContext';
 import { extractFilePath } from '../lib/storageUtils';
+import { compressImage } from '../lib/imageUtils';
 
 export function useArtworks() {
   const { user } = useAuth();
@@ -64,10 +65,13 @@ export function useArtworks() {
     try {
       let image_url = null;
       if (imageFile) {
+        // Compress image before upload
+        const compressedFile = await compressImage(imageFile);
+        
         const filePath = `${user.id}/${Date.now()}_${imageFile.name}`;
         const { error: uploadError } = await supabase.storage
           .from('artworks')
-          .upload(filePath, imageFile);
+          .upload(filePath, compressedFile);
         if (uploadError) throw uploadError;
         
         const { data: { publicUrl } } = supabase.storage
@@ -115,7 +119,13 @@ export function useArtworks() {
         // 2. Extract path and delete from storage
         const filePath = extractFilePath(artwork.image_url, 'artworks');
         if (filePath) {
-          await supabase.storage.from('artworks').remove([filePath]);
+          const { error: storageError } = await supabase.storage.from('artworks').remove([filePath]);
+          if (storageError) {
+            console.error('Failed to remove file from storage:', storageError);
+            // We continue anyway so the DB record can be cleaned up
+          }
+        } else {
+          console.warn('Could not extract file path from URL:', artwork.image_url);
         }
       }
 

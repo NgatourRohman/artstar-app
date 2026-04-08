@@ -3,6 +3,7 @@ import { supabase, isDemoMode } from '../lib/supabase';
 import { DEMO_COMPETITIONS } from '../lib/demoData';
 import { useAuth } from '../context/AuthContext';
 import { extractFilePath } from '../lib/storageUtils';
+import { compressImage } from '../lib/imageUtils';
 
 export function useCompetitions() {
   const { user } = useAuth();
@@ -52,10 +53,13 @@ export function useCompetitions() {
     try {
       let certificate_url = null;
       if (certificateFile) {
+        // Compress image before upload
+        const compressedFile = await compressImage(certificateFile);
+        
         const filePath = `${user.id}/${Date.now()}_${certificateFile.name}`;
         const { error: uploadError } = await supabase.storage
           .from('certificates')
-          .upload(filePath, certificateFile);
+          .upload(filePath, compressedFile);
         if (uploadError) throw uploadError;
 
         const { data: { publicUrl } } = supabase.storage
@@ -103,7 +107,13 @@ export function useCompetitions() {
         // 2. Extract path and delete from storage
         const filePath = extractFilePath(comp.certificate_url, 'certificates');
         if (filePath) {
-          await supabase.storage.from('certificates').remove([filePath]);
+          const { error: storageError } = await supabase.storage.from('certificates').remove([filePath]);
+          if (storageError) {
+            console.error('Failed to remove certificate from storage:', storageError);
+            // We continue anyway so the DB record can be cleaned up
+          }
+        } else {
+          console.warn('Could not extract file path from URL:', comp.certificate_url);
         }
       }
 

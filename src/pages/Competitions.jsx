@@ -24,7 +24,7 @@ export default function Competitions() {
   const { artworks } = useArtworks();
   const { checkAndUnlockBadges } = useBadges();
   const { shareUrl, createShareLink, copyToClipboard } = useShare();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [showAddForm, setShowAddForm] = useState(searchParams.get('add') === 'true');
   const [selectedComp, setSelectedComp] = useState(null);

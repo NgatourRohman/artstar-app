@@ -34,7 +34,7 @@ export default function Gallery() {
   const { artworks, fetchArtworks, addArtwork, deleteArtwork } = useArtworks();
   const { checkAndUnlockBadges, newlyUnlocked, clearNewlyUnlocked } = useBadges();
   const { shareUrl, createShareLink, copyToClipboard } = useShare();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   const [activeCategory, setActiveCategory] = useState('all');
   const [showAddForm, setShowAddForm] = useState(searchParams.get('add') === 'true');
@@ -313,7 +313,7 @@ export default function Gallery() {
               >
                 {CATEGORIES.find(c => c.id === selectedArtwork.category)?.emoji} {t(`gallery.categories.${selectedArtwork.category}`)}
               </span>
-              <span>{formatDate(selectedArtwork.created_at)}</span>
+              <span>{formatDate(selectedArtwork.date || selectedArtwork.created_at)}</span>
             </div>
 
             {selectedArtwork.description && (

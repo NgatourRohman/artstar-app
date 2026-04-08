@@ -10,7 +10,7 @@ export default function SharedView() {
   const [type, setType] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     async function fetchSharedItem() {

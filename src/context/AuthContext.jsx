@@ -1,3 +1,4 @@
+import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase, isDemoMode } from '../lib/supabase';
 import { DEMO_PROFILE } from '../lib/demoData';
 import { useNotifications } from './NotificationContext';

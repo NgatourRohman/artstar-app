@@ -54,7 +54,7 @@ export default function Profile() {
   };
 
   const memberSince = displayProfile?.created_at
-    ? new Date(displayProfile.created_at).toLocaleDateString('en-US', {
+    ? new Date(displayProfile.created_at).toLocaleDateString(i18n.resolveLanguage === 'id' ? 'id-ID' : 'en-US', {
         month: 'long',
         year: 'numeric',
       })

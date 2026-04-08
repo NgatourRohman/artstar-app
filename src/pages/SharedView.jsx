@@ -129,7 +129,7 @@ export default function SharedView() {
           </div>
           <h1 className="detail-title">{item.name}</h1>
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: 16 }}>
-            {new Date(item.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            {new Date(item.date).toLocaleDateString(i18n.resolveLanguage === 'id' ? 'id-ID' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
           {item.notes && (
             <p className="detail-description">{item.notes}</p>

@@ -114,7 +114,7 @@ export default function Gallery() {
   };
 
   const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return new Date(dateStr).toLocaleDateString(i18n.language === 'id' ? 'id-ID' : 'en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',

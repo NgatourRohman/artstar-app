@@ -177,15 +177,13 @@ export default function Competitions() {
                   {resultConf.emoji}
                 </div>
                 <div className="competition-card-info">
-                  <div className="competition-card-name" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {comp.name}
-                    <span style={{ 
-                      fontSize: '10px', 
-                      padding: '2px 6px', 
-                      borderRadius: '4px',
+                  <div className="competition-card-header">
+                    <div className="competition-card-name">
+                      {comp.name}
+                    </div>
+                    <span className="competition-status-tag" style={{ 
                       background: STATUS_CONFIG[comp.status]?.bg || '#F3F4F6',
                       color: STATUS_CONFIG[comp.status]?.color || '#6B7280',
-                      fontWeight: 700
                     }}>
                       {t(`competitions.status.${comp.status}`).toUpperCase()}
                     </span>

@@ -43,9 +43,6 @@ export function useArtBuddy() {
     }
 
     try {
-      // Get the current session to ensure we have a fresh JWT
-      const { data: { session } } = await supabase.auth.getSession();
-
       // Prepare context for the AI
       const context = {
         userName: profile?.display_name || 'Artis Cilik',
@@ -54,11 +51,11 @@ export function useArtBuddy() {
         currentPath: window.location.pathname
       };
 
+      // Use the built-in invoke mechanism: handles JWT and API Key automatically
+      console.log('ArtBuddy: Invoking function for user:', profile?.display_name);
+      
       const { data, error } = await supabase.functions.invoke('artbuddy-chat', {
-        body: { message: text, context },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`
-        }
+        body: { message: text, context }
       });
 
       if (error) throw error;

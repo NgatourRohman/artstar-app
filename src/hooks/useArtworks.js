@@ -94,7 +94,7 @@ export function useArtworks() {
           location,
           tools,
           purpose,
-          competition_id,
+          competition_id: competition_id || null,
           image_url,
           created_at: date ? new Date(date).toISOString() : new Date().toISOString()
         })
@@ -106,7 +106,7 @@ export function useArtworks() {
       const newArtworkData = data[0];
       setArtworks(prev => [newArtworkData, ...prev]);
       showSuccess('Artwork added successfully! ✨');
-      return { data, error: null };
+      return { data: newArtworkData, error: null };
     } catch (err) {
       showError(`Failed to add artwork: ${err.message}`);
       return { data: null, error: err.message };

@@ -89,7 +89,7 @@ export function useCompetitions() {
       const newCompData = data[0];
       setCompetitions(prev => [newCompData, ...prev]);
       showSuccess('Competition record added! 🏆');
-      return { data, error: null };
+      return { data: newCompData, error: null };
     } catch (err) {
       showError(`Failed to add competition: ${err.message}`);
       return { data: null, error: err.message };
@@ -159,7 +159,7 @@ export function useCompetitions() {
       const updatedComp = data[0];
       setCompetitions(prev => prev.map(c => c.id === id ? updatedComp : c));
       showSuccess('Competition updated! 🏆');
-      return { data, error: null };
+      return { data: updatedComp, error: null };
     } catch (err) {
       showError(`Failed to update competition: ${err.message}`);
       return { data: null, error: err.message };

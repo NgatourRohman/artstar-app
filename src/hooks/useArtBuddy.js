@@ -6,7 +6,7 @@ import { useArtworks } from '../hooks/useArtworks';
 import { useBadges } from '../hooks/useBadges';
 
 export function useArtBuddy() {
-  const { user } = useAuth();
+  const { user, isDemoMode } = useAuth();
   const { profile } = useProfile();
   const { artworks } = useArtworks();
   const { badgeCount } = useBadges();
@@ -32,10 +32,7 @@ export function useArtBuddy() {
     // Add user message to UI immediately
     const userMessage = { role: 'user', text };
     setMessages(prev => [...prev, userMessage]);
-    if (loading) return;
-
-    // Check if we are in Demo Mode (no valid JWT)
-    const { isDemoMode } = useAuth();
+    setLoading(true);
     if (isDemoMode) {
       setMessages(prev => [...prev, { 
         role: 'ai', 
@@ -72,7 +69,7 @@ export function useArtBuddy() {
     } finally {
       setLoading(false);
     }
-  }, [profile, artworks.length, badgeCount]);
+  }, [profile, artworks.length, badgeCount, isDemoMode]);
 
   const toggleChat = () => setIsOpen(prev => !prev);
 

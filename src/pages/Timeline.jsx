@@ -63,7 +63,6 @@ export default function Timeline() {
 
     items.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // Grouping logic
     const groups = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);

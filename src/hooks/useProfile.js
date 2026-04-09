@@ -25,7 +25,6 @@ export function useProfile() {
         .single();
 
       if (error && error.code === 'PGRST116') {
-        // Profile doesn't exist yet — create it
         const newProfile = {
           id: user.id,
           display_name: user.user_metadata?.display_name || 'Little Artist',

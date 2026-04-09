@@ -74,9 +74,8 @@ export function useBadges() {
       setNewlyUnlocked(newBadges);
       return newBadges;
     } catch (err) {
-      // If it's a duplicate key error, we can safely ignore it or handle it silently
       if (err.code === '23505') {
-        fetchUserBadges(); // Re-sync to be sure
+        fetchUserBadges();
         return [];
       }
       console.error('Error unlocking badges:', err);

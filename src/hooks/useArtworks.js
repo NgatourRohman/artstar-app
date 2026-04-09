@@ -58,7 +58,6 @@ export function useArtworks() {
         uploaded_at: new Date().toISOString(),
         color: ['#7C3AED', '#F97316', '#EC4899', '#3B82F6', '#10B981'][Math.floor(Math.random() * 5)],
       };
-      // For demo mode we just keep original behavior or simulate properly
       if (date) newArt.created_at = new Date(date).toISOString();
       setArtworks(prev => [newArt, ...prev]);
       return { data: newArt, error: null };
@@ -67,7 +66,6 @@ export function useArtworks() {
     try {
       let image_url = null;
       if (imageFile) {
-        // Compress image before upload
         const compressedFile = await compressImage(imageFile);
         
         const filePath = `${user.id}/${Date.now()}_${imageFile.name}`;
@@ -112,7 +110,6 @@ export function useArtworks() {
     }
 
     try {
-      // 1. Get the artwork to find the image URL
       const { data: artwork } = await supabase
         .from('artworks')
         .select('image_url')
@@ -120,7 +117,6 @@ export function useArtworks() {
         .single();
 
       if (artwork?.image_url) {
-        // 2. Extract path and delete from storage
         const filePath = extractFilePath(artwork.image_url, 'artworks');
         if (filePath) {
           console.debug(`Attempting to remove storage file: ${filePath}`);
@@ -128,8 +124,6 @@ export function useArtworks() {
           if (storageError) {
             console.error('SUPABASE STORAGE ERROR:', storageError);
             showError(`Could not delete image from gallery storage (Error: ${storageError.message}). Please check bucket permissions.`);
-            // We continue anyway so the DB record can be cleaned up if desired, 
-            // OR we can stop here. The user wants the bucket clean, so maybe we SHOULD know.
           } else {
             console.debug('Successfully removed file from storage');
           }
@@ -138,7 +132,6 @@ export function useArtworks() {
         }
       }
 
-      // 3. Delete database record
       const { error: err } = await supabase.from('artworks').delete().eq('id', id);
       if (err) throw err;
 

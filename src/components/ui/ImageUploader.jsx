@@ -11,7 +11,6 @@ export default function ImageUploader({ onImageSelect, preview, onClear }) {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Clean up previous preview URL to save memory
     if (previewUrl && previewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(previewUrl);
     }
@@ -20,7 +19,6 @@ export default function ImageUploader({ onImageSelect, preview, onClear }) {
     setPreviewUrl(url);
     onImageSelect(file);
     
-    // RESET input value so the same file can be selected again
     e.target.value = '';
   };
 

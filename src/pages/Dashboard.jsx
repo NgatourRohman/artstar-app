@@ -41,14 +41,8 @@ export default function Dashboard() {
   const artistName = displayProfile?.display_name || 'Artist';
 
   const getGreeting = () => {
-    // Get hour in 24h format regardless of system settings
     const hour = new Date().getHours();
     
-    // Logika salam yang lebih mendetail:
-    // 05 - 10: Pagi
-    // 11 - 14: Siang
-    // 15 - 18: Sore
-    // 19 - 04: Malam
     if (hour >= 5 && hour < 11) return t('dashboard.greeting_morning', { name: artistName });
     if (hour >= 11 && hour < 15) return t('dashboard.greeting_afternoon', { name: artistName });
     if (hour >= 15 && hour < 19) return t('dashboard.greeting_evening', { name: artistName });
@@ -57,7 +51,6 @@ export default function Dashboard() {
 
   return (
     <div className="page-enter">
-      {/* Greeting */}
       <div className="dashboard-greeting">
         <h1>
           {getGreeting()} ✨
@@ -65,7 +58,6 @@ export default function Dashboard() {
         <p>{t('dashboard.subtitle')}</p>
       </div>
 
-      {/* Stats Row */}
       <div className="stats-row">
         <div 
           className="stat-card" 
@@ -110,7 +102,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Latest Badge */}
       {latestBadge && (
         <div className="latest-badge-card" onClick={() => navigate('/badges')} style={{ cursor: 'pointer' }}>
           <div className="latest-badge-icon">{latestBadge.icon}</div>
@@ -121,7 +112,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Recent Artworks */}
       {artworks.length > 0 && (
         <div>
           <div className="section-header">
@@ -151,7 +141,6 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Quick Actions */}
       {artworks.length === 0 && (
         <div className="text-center mt-xl">
           <div style={{ fontSize: '4rem', marginBottom: 16 }}>🎨</div>

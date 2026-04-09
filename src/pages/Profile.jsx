@@ -62,7 +62,6 @@ export default function Profile() {
 
   return (
     <div className="page-enter">
-      {/* Profile Header */}
       <div className="profile-header">
         <div className="profile-avatar">
           {displayProfile?.avatar_url || '🦄'}
@@ -71,7 +70,6 @@ export default function Profile() {
         <p className="profile-since">⭐ {t('profile.member_since', { date: memberSince })}</p>
       </div>
 
-      {/* Stats */}
       <div className="stats-row mt-xl">
         <div 
           className="stat-card" 
@@ -116,7 +114,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Menu Items */}
       <div className="flex flex-col gap-sm mt-xl">
         <button
           className="stat-card"
@@ -177,7 +174,6 @@ export default function Profile() {
         )}
       </div>
 
-      {/* Settings Modal */}
       {showSettings && createPortal(
         <div className="modal-overlay" onClick={() => setShowSettings(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>

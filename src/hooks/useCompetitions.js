@@ -55,7 +55,6 @@ export function useCompetitions() {
     try {
       let certificate_url = null;
       if (certificateFile) {
-        // Compress image before upload
         const compressedFile = await compressImage(certificateFile);
         
         const filePath = `${user.id}/${Date.now()}_${certificateFile.name}`;
@@ -100,7 +99,6 @@ export function useCompetitions() {
     }
 
     try {
-      // 1. Get competition to find the certificate URL
       const { data: comp } = await supabase
         .from('competitions')
         .select('certificate_url')
@@ -108,7 +106,6 @@ export function useCompetitions() {
         .single();
 
       if (comp?.certificate_url) {
-        // 2. Extract path and delete from storage
         const filePath = extractFilePath(comp.certificate_url, 'certificates');
         if (filePath) {
           console.debug(`Attempting to remove certificate file: ${filePath}`);
@@ -124,7 +121,6 @@ export function useCompetitions() {
         }
       }
 
-      // 3. Delete database record
       const { error: err } = await supabase.from('competitions').delete().eq('id', id);
       if (err) throw err;
 

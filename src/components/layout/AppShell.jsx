@@ -6,14 +6,12 @@ import BottomNav from './BottomNav';
 export default function AppShell() {
   const { scrollY } = useScroll();
   
-  // Parallax transforms - move blobs at different speeds
   const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
   const y2 = useTransform(scrollY, [0, 1000], [0, -150]);
   const rotate1 = useTransform(scrollY, [0, 1000], [0, 45]);
 
   return (
     <div className="app-shell">
-      {/* Decorative Blobs with Parallax */}
       <motion.div 
         className="bg-blob blob-1"
         style={{ y: y1, rotate: rotate1 }}

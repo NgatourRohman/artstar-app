@@ -9,10 +9,8 @@
  * @returns {Promise<Blob>} The compressed image blob
  */
 export async function compressImage(file, { maxWidth = 1200, maxHeight = 1200, quality = 0.75 } = {}) {
-  // If not an image, skip compression
   if (!file.type.startsWith('image/')) return file;
   
-  // If it's a small file already, skip compression (e.g., < 200KB)
   if (file.size < 200 * 1024) return file;
 
   return new Promise((resolve, reject) => {
@@ -26,7 +24,6 @@ export async function compressImage(file, { maxWidth = 1200, maxHeight = 1200, q
         let width = img.width;
         let height = img.height;
 
-        // Calculate new dimensions
         if (width > height) {
           if (width > maxWidth) {
             height = Math.round((height * maxWidth) / width);
@@ -45,11 +42,9 @@ export async function compressImage(file, { maxWidth = 1200, maxHeight = 1200, q
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Convert to blob (JPEG is usually much smaller than PNG for photos)
         canvas.toBlob(
           (blob) => {
             if (blob) {
-              // Ensure we return the same name as original for better metadata
               const compressedFile = new File([blob], file.name, {
                 type: 'image/jpeg',
                 lastModified: Date.now(),

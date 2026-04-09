@@ -43,7 +43,6 @@ export default function Gallery() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Form state
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('drawing');
@@ -79,7 +78,6 @@ export default function Gallery() {
       setDate(new Date().toISOString().split('T')[0]);
       setImageFile(null);
 
-      // Check badges
       const categories = [...new Set(artworks.map(a => a.category).concat(category))];
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -134,7 +132,6 @@ export default function Gallery() {
         </button>
       </div>
 
-      {/* Category Filters */}
       <div className="category-filters">
         {CATEGORIES.map(cat => (
           <button
@@ -147,7 +144,6 @@ export default function Gallery() {
         ))}
       </div>
 
-      {/* Gallery Grid */}
       {artworks.length > 0 ? (
         <div className="gallery-grid">
           {artworks.map((artwork) => (
@@ -203,7 +199,6 @@ export default function Gallery() {
         />
       )}
 
-      {/* Add Form Modal */}
       {showAddForm && createPortal(
         <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -278,7 +273,6 @@ export default function Gallery() {
         document.body
       )}
 
-      {/* Artwork Detail Modal */}
       {selectedArtwork && createPortal(
         <div className="modal-overlay" onClick={() => setSelectedArtwork(null)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -339,7 +333,6 @@ export default function Gallery() {
         document.body
       )}
 
-      {/* Share Modal */}
       {showShareModal && shareUrl && createPortal(
         <div className="modal-overlay" onClick={() => setShowShareModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>

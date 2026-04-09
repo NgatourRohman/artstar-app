@@ -53,9 +53,15 @@ export function useArtBuddy() {
       setMessages(prev => [...prev, aiResponse]);
     } catch (err) {
       console.error('ArtBuddy Error:', err);
+      
+      let errorMessage = 'Wah, sepertinya sinyal kreatifku lagi terganggu. Coba lagi sebentar lagi ya! 🌈';
+      if (err.status === 401) {
+        errorMessage = 'ArtBuddy butuh izin akses nih. Pastikan Edge Function dideploy dengan --no-verify-jwt ya! 🔑';
+      }
+
       setMessages(prev => [...prev, { 
         role: 'ai', 
-        text: 'Wah, sepertinya sinyal kreatifku lagi terganggu. Coba lagi sebentar lagi ya! 🌈' 
+        text: errorMessage
       }]);
     } finally {
       setLoading(false);

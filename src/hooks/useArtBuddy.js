@@ -6,7 +6,7 @@ import { useArtworks } from '../hooks/useArtworks';
 import { useBadges } from '../hooks/useBadges';
 
 export function useArtBuddy() {
-  const { user, isDemoMode } = useAuth();
+  const { user } = useAuth();
   const { profile } = useProfile();
   const { artworks } = useArtworks();
   const { badgeCount } = useBadges();
@@ -26,19 +26,11 @@ export function useArtBuddy() {
   }, [user]);
 
   const sendMessage = useCallback(async (text) => {
-    if (!text.trim()) return;
+    if (loading || !text.trim()) return;
 
     const userMessage = { role: 'user', text };
     setMessages(prev => [...prev, userMessage]);
     setLoading(true);
-    if (isDemoMode) {
-      setMessages(prev => [...prev, { 
-        role: 'ai', 
-        text: 'Maaf ya, ArtBuddy hanya bisa mengobrol setelah kamu masuk/daftar akun resmi. Coba buat akun sekarang yuk! ✨🚀' 
-      }]);
-      setLoading(false);
-      return;
-    }
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
@@ -106,7 +98,7 @@ export function useArtBuddy() {
     } finally {
       setLoading(false);
     }
-  }, [profile, artworks.length, badgeCount, isDemoMode]);
+  }, [profile, artworks.length, badgeCount]);
 
   const toggleChat = () => setIsOpen(prev => !prev);
 

@@ -50,7 +50,8 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
-    navigate('/login');
+    await signOut();
+    navigate('/login', { replace: true });
   };
 
   const handleExportPDF = () => {
@@ -144,10 +145,10 @@ export default function Profile() {
           onClick={handleExportPDF}
           style={{ 
             cursor: 'pointer', 
-            border: 'none', 
             textAlign: 'left',
             background: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)',
-            border: '2px dashed #3B82F6'
+            border: '2px dashed #3B82F6',
+            borderRadius: 'var(--radius-lg)'
           }}
         >
           <div className="stat-card-icon" style={{ background: '#3B82F6' }}>
@@ -187,21 +188,19 @@ export default function Profile() {
           </div>
         </button>
 
-        {!isDemoMode && (
-          <button
-            className="stat-card"
-            onClick={handleLogout}
-            style={{ cursor: 'pointer', border: 'none', textAlign: 'left' }}
-          >
-            <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #FECDD3, #FB7185)' }}>
-              <LogOut size={22} color="#BE123C" />
-            </div>
-            <div className="stat-card-info">
-              <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('profile.sign_out')}</span>
-              <span className="stat-card-label">{t('profile.see_you_later')}</span>
-            </div>
-          </button>
-        )}
+        <button
+          className="stat-card"
+          onClick={handleLogout}
+          style={{ cursor: 'pointer', border: 'none', textAlign: 'left' }}
+        >
+          <div className="stat-card-icon" style={{ background: 'linear-gradient(135deg, #FECDD3, #FB7185)' }}>
+            <LogOut size={22} color="#BE123C" />
+          </div>
+          <div className="stat-card-info">
+            <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('profile.sign_out')}</span>
+            <span className="stat-card-label">{t('profile.see_you_later')}</span>
+          </div>
+        </button>
       </div>
 
       {showSettings && createPortal(

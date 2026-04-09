@@ -68,12 +68,21 @@ export function AuthProvider({ children }) {
   };
 
   const signOut = async () => {
-    if (isDemoMode) return;
     try {
-      await supabase.auth.signOut();
+      if (isDemoMode) {
+        setUser(null);
+        setSession(null);
+      } else {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        // States will be cleared by onAuthStateChange, 
+        // but we can also set them null explicitly here for faster UI response
+        setUser(null);
+        setSession(null);
+      }
       showSuccess('Logged out safely. See you soon!');
     } catch (err) {
-      showError('Error during sign out.');
+      showError(`Error during sign out: ${err.message}`);
     }
   };
 

@@ -103,9 +103,12 @@ export function useCompetitions() {
     }
 
     try {
+      const { data, error } = await supabase
+        .from('competitions')
         .select('certificate_url')
         .eq('id', id);
 
+      if (error) throw error;
       const comp = data && data.length > 0 ? data[0] : null;
 
       if (comp?.certificate_url) {

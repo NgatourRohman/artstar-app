@@ -107,7 +107,7 @@ export const DEMO_USER_BADGES = [
   { badge_id: 'colorful_creator', unlocked_at: '2026-04-01T11:00:00Z' },
 ];
 
-// Helper to generate demo stats
+
 export function getDemoStats() {
   const artworkCount = DEMO_ARTWORKS.length;
   const competitionCount = DEMO_COMPETITIONS.length;
@@ -115,7 +115,6 @@ export function getDemoStats() {
   const categories = [...new Set(DEMO_ARTWORKS.map(a => a.category))];
   const hasWin = DEMO_COMPETITIONS.some(c => c.result === 'winner' || c.result === 'grand_winner');
 
-  // Check weekly streak
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
   const weeklyArtworkCount = DEMO_ARTWORKS.filter(

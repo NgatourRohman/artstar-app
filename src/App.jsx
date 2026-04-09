@@ -33,10 +33,8 @@ function PublicRoute({ children }) {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public route — shared view */}
       <Route path="/shared/:shareId" element={<SharedView />} />
 
-      {/* Auth routes */}
       <Route
         path="/login"
         element={
@@ -46,7 +44,6 @@ function AppRoutes() {
         }
       />
 
-      {/* Protected routes with app shell */}
       <Route
         element={
           <ProtectedRoute>
@@ -62,7 +59,6 @@ function AppRoutes() {
         <Route path="/profile" element={<Profile />} />
       </Route>
 
-      {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

@@ -50,7 +50,7 @@ serve(async (req) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nUser: ${message}` }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 200 }
+        generationConfig: { temperature: 0.7, maxOutputTokens: 800 }
       })
     });
 

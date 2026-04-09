@@ -98,11 +98,13 @@ export function useArtworks() {
           image_url,
           created_at: date ? new Date(date).toISOString() : new Date().toISOString()
         })
-        .select()
-        .single();
-
+        .select();
+      
       if (err) throw err;
-      setArtworks(prev => [data, ...prev]);
+      if (!data || data.length === 0) throw new Error('Failed to create artwork record');
+      
+      const newArtworkData = data[0];
+      setArtworks(prev => [newArtworkData, ...prev]);
       showSuccess('Artwork added successfully! ✨');
       return { data, error: null };
     } catch (err) {
@@ -118,11 +120,10 @@ export function useArtworks() {
     }
 
     try {
-      const { data: artwork } = await supabase
-        .from('artworks')
         .select('image_url')
-        .eq('id', id)
-        .single();
+        .eq('id', id);
+
+      const artwork = data && data.length > 0 ? data[0] : null;
 
       if (artwork?.image_url) {
         const filePath = extractFilePath(artwork.image_url, 'artworks');

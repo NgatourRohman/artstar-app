@@ -32,7 +32,18 @@ export function useArtBuddy() {
     // Add user message to UI immediately
     const userMessage = { role: 'user', text };
     setMessages(prev => [...prev, userMessage]);
-    setLoading(true);
+    if (loading) return;
+
+    // Check if we are in Demo Mode (no valid JWT)
+    const { isDemoMode } = useAuth();
+    if (isDemoMode) {
+      setMessages(prev => [...prev, { 
+        role: 'ai', 
+        text: 'Maaf ya, ArtBuddy hanya bisa mengobrol setelah kamu masuk/daftar akun resmi. Coba buat akun sekarang yuk! ✨🚀' 
+      }]);
+      setLoading(false);
+      return;
+    }
 
     try {
       // Prepare context for the AI
@@ -53,16 +64,11 @@ export function useArtBuddy() {
       setMessages(prev => [...prev, aiResponse]);
     } catch (err) {
       console.error('ArtBuddy Error:', err);
+      const errorMessage = err.status === 401 
+        ? 'Akses ditolak. Silakan masuk akun terlebih dahulu untuk mengobrol dengan ArtBuddy! 🔐'
+        : 'Wah, sepertinya sinyal kreatifku lagi terganggu. Coba lagi sebentar lagi ya! 🌈';
       
-      let errorMessage = 'Wah, sepertinya sinyal kreatifku lagi terganggu. Coba lagi sebentar lagi ya! 🌈';
-      if (err.status === 401) {
-        errorMessage = 'ArtBuddy butuh izin akses nih. Pastikan Edge Function dideploy dengan --no-verify-jwt ya! 🔑';
-      }
-
-      setMessages(prev => [...prev, { 
-        role: 'ai', 
-        text: errorMessage
-      }]);
+      setMessages(prev => [...prev, { role: 'ai', text: errorMessage }]);
     } finally {
       setLoading(false);
     }

@@ -2,9 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, Wand2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function ChatWindow({ messages, onSendMessage, loading, isOpen }) {
+export default function ChatWindow({ messages, onSendMessage, onRetry, loading, isOpen }) {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
+  
+  const lastMessage = messages[messages.length - 1];
+  const hasError = lastMessage?.isError;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -44,7 +47,7 @@ export default function ChatWindow({ messages, onSendMessage, loading, isOpen })
 
           <div className="art-buddy-messages">
             {messages.map((msg, idx) => (
-              <div key={idx} className={`chat-bubble ${msg.role === 'ai' ? 'ai' : 'user'}`}>
+              <div key={idx} className={`chat-bubble ${msg.role === 'ai' ? 'ai' : 'user'} ${msg.isError ? 'error-bubble' : ''}`}>
                 {msg.text}
               </div>
             ))}
@@ -62,16 +65,26 @@ export default function ChatWindow({ messages, onSendMessage, loading, isOpen })
           </div>
 
           <div className="art-buddy-quick-actions">
-            {quickActions.map((action, idx) => (
+            {hasError ? (
               <button
-                key={idx}
-                className="quick-action-btn"
-                onClick={() => onSendMessage(action.prompt)}
+                className="quick-action-btn retry-btn"
+                onClick={onRetry}
                 disabled={loading}
               >
-                {action.label}
+                Coba Lagi 🔄
               </button>
-            ))}
+            ) : (
+              quickActions.map((action, idx) => (
+                <button
+                  key={idx}
+                  className="quick-action-btn"
+                  onClick={() => onSendMessage(action.prompt)}
+                  disabled={loading}
+                >
+                  {action.label}
+                </button>
+              ))
+            )}
           </div>
 
           <form className="chat-input-area" onSubmit={handleSubmit}>

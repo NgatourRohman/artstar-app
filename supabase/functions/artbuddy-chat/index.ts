@@ -20,13 +20,11 @@ serve(async (req) => {
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     )
 
-    // Verify the user internally
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
     
-    // If you want to strictly require login even with --no-verify-jwt
     if (authError || !user) {
       return new Response(
-        JSON.stringify({ error: 'Unauthorized: Harap login terlebih dahulu.' }),
+        JSON.stringify({ error: 'UNAUTHORIZED', message: 'Harap login terlebih dahulu.' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
       )
     }
@@ -35,7 +33,7 @@ serve(async (req) => {
     const apiKey = Deno.env.get('GEMINI_API_KEY');
 
     if (!apiKey) {
-      throw new Error('GEMINI_API_KEY is not set');
+      throw new Error('CONFIG_MISSING');
     }
 
     const systemPrompt = `You are "ArtBuddy", a cheerful, supportive, and creative art mentor for children in an app called "ArtStar". 
@@ -45,26 +43,66 @@ serve(async (req) => {
     Use Indonesian as the primary language.
     Keep responses concise and friendly. Use emojis! ✨🎨`;
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nUser: ${message}` }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 800 }
-      })
-    });
+    // Fetch with Timeout mechanism
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
-    const data = await response.json();
-    const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "Wah, ArtBuddy lagi istirahat sebentar. Coba lagi nanti ya! 🌈";
+    try {
+      const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nUser: ${message}` }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 800 }
+        }),
+        signal: controller.signal
+      });
 
-    return new Response(
-      JSON.stringify({ text: aiResponse }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-    );
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          return new Response(JSON.stringify({ error: 'QUOTA_EXCEEDED' }), { 
+            headers: { ...corsHeaders, "Content-Type": "application/json" }, 
+            status: 429 
+          });
+        }
+        throw new Error(`MODEL_ERROR_${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Check for finishReason
+      const candidate = data.candidates?.[0];
+      const finishReason = candidate?.finishReason;
+      
+      if (finishReason === 'SAFETY') {
+        return new Response(JSON.stringify({ error: 'SAFETY_BLOCK' }), { 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }, 
+          status: 200 
+        });
+      }
+
+      const aiResponse = candidate?.content?.parts?.[0]?.text || "NO_RESPONSE";
+
+      return new Response(
+        JSON.stringify({ text: aiResponse, finishReason }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+
+    } catch (fetchError) {
+      if (fetchError.name === 'AbortError') {
+        return new Response(JSON.stringify({ error: 'TIMEOUT' }), { 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }, 
+          status: 504 
+        });
+      }
+      throw fetchError;
+    }
 
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message || 'UNKNOWN_ERROR' }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
     );
   }

@@ -55,24 +55,43 @@ export function useArtBuddy() {
       };
 
       // Explicitly pass token for internal verification on the Edge Function
-      const { data, error } = await supabase.functions.invoke('artbuddy-chat', {
+      const { data, error: funcError } = await supabase.functions.invoke('artbuddy-chat', {
         body: { message: text, context },
         headers: {
           Authorization: `Bearer ${session?.access_token}`
         }
       });
 
-      if (error) throw error;
+      if (funcError) throw funcError;
+
+      if (data.error) {
+        let friendlyMessage = 'Aduh, ArtBuddy lagi pusing sedikit. Coba lagi nanti ya! 🌈';
+        
+        switch (data.error) {
+          case 'QUOTA_EXCEEDED':
+            friendlyMessage = 'Wah, tangki ideku lagi kosong nih. Tunggu sebentar ya, aku lagi isi bensin kreatif dulu! 🎨🚀';
+            break;
+          case 'SAFETY_BLOCK':
+            friendlyMessage = 'ArtBuddy rasa itu bukan ide yang bagus buat digambar. Cari ide seru lainnya yuk! ✨🌟';
+            break;
+          case 'TIMEOUT':
+            friendlyMessage = 'Sinyal kreatifku lagi pelan banget... Coba kirim pesan lagi ya! 📡💫';
+            break;
+          case 'UNAUTHORIZED':
+            friendlyMessage = 'ArtBuddy cuma bisa ngobrol sama yang sudah login. Masuk dulu yuk! 🔐';
+            break;
+        }
+
+        setMessages(prev => [...prev, { role: 'ai', text: friendlyMessage, isError: true }]);
+        return;
+      }
 
       const aiResponse = { role: 'ai', text: data.text };
       setMessages(prev => [...prev, aiResponse]);
     } catch (err) {
       console.error('ArtBuddy Error:', err);
-      const errorMessage = err.status === 401 
-        ? 'Akses ditolak. Silakan masuk akun terlebih dahulu untuk mengobrol dengan ArtBuddy! 🔐'
-        : 'Wah, sepertinya sinyal kreatifku lagi terganggu. Coba lagi sebentar lagi ya! 🌈';
-      
-      setMessages(prev => [...prev, { role: 'ai', text: errorMessage }]);
+      const errorMessage = 'Wah, sepertinya sinyal kreatifku lagi terganggu. Coba klik tombol "Coba Lagi" ya! 🌈';
+      setMessages(prev => [...prev, { role: 'ai', text: errorMessage, isError: true }]);
     } finally {
       setLoading(false);
     }
@@ -80,9 +99,17 @@ export function useArtBuddy() {
 
   const toggleChat = () => setIsOpen(prev => !prev);
 
+  const retry = useCallback(() => {
+    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+    if (lastUserMsg) {
+      sendMessage(lastUserMsg.text);
+    }
+  }, [messages, sendMessage]);
+
   return {
     messages,
     sendMessage,
+    retry,
     loading,
     isOpen,
     toggleChat

@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Header from './Header';
 import BottomNav from './BottomNav';
+import ArtBuddy from '../ui/ArtBuddy/ArtBuddy';
 
 export default function AppShell() {
   const { scrollY } = useScroll();
@@ -26,6 +27,7 @@ export default function AppShell() {
         <Outlet />
       </main>
       <BottomNav />
+      <ArtBuddy />
     </div>
   );
 }

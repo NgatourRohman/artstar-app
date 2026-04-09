@@ -120,6 +120,8 @@ export function useArtworks() {
     }
 
     try {
+      const { data } = await supabase
+        .from('artworks')
         .select('image_url')
         .eq('id', id);
 

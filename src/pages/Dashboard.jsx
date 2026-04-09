@@ -68,26 +68,24 @@ export default function Dashboard() {
         flexDirection: 'column',
         gap: 8
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ 
               background: 'var(--color-primary)', 
               color: 'white', 
               padding: '4px 12px', 
               borderRadius: 'var(--radius-full)',
-              fontSize: 'var(--text-xs)',
+              fontSize: '10px',
               fontWeight: 800,
-              boxShadow: '0 2px 8px rgba(124, 58, 237, 0.3)'
+              boxShadow: '0 2px 8px rgba(124, 58, 237, 0.3)',
+              letterSpacing: '0.05em'
             }}>
               LEVEL {displayProfile?.level || 1}
             </span>
-            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
-              XP KAMU: {displayProfile?.xp || 0}
+            <span style={{ fontSize: '10px', color: 'var(--color-text-tertiary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+              XP: {displayProfile?.xp || 0}
             </span>
           </div>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', fontWeight: 700 }}>
-            {t('gamification.xp_left', { amount: 100 - ((displayProfile?.xp || 0) % 100), level: (displayProfile?.level || 1) + 1 })}
-          </span>
           <button 
             className="btn-text" 
             onClick={(e) => {
@@ -98,15 +96,21 @@ export default function Dashboard() {
               fontSize: '10px', 
               color: 'var(--color-primary)', 
               fontWeight: 800,
-              padding: '2px 8px',
+              padding: '4px 10px',
               background: 'white',
               borderRadius: 'var(--radius-md)',
-              border: 'none',
-              cursor: 'pointer'
+              border: '1px solid rgba(124, 58, 237, 0.1)',
+              cursor: 'pointer',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
             }}
           >
             {t('gamification.see_detail')}
           </button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: 2 }}>
+          <span style={{ fontSize: '11px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
+            ✨ {t('gamification.xp_left', { amount: 100 - ((displayProfile?.xp || 0) % 100), level: (displayProfile?.level || 1) + 1 })}
+          </span>
         </div>
         <div style={{ 
           height: 12, 

@@ -81,11 +81,13 @@ export function useCompetitions() {
           notes,
           certificate_url,
         })
-        .select()
-        .single();
-
+        .select();
+      
       if (err) throw err;
-      setCompetitions(prev => [data, ...prev]);
+      if (!data || data.length === 0) throw new Error('Failed to create competition record');
+      
+      const newCompData = data[0];
+      setCompetitions(prev => [newCompData, ...prev]);
       showSuccess('Competition record added! 🏆');
       return { data, error: null };
     } catch (err) {
@@ -101,11 +103,10 @@ export function useCompetitions() {
     }
 
     try {
-      const { data: comp } = await supabase
-        .from('competitions')
         .select('certificate_url')
-        .eq('id', id)
-        .single();
+        .eq('id', id);
+
+      const comp = data && data.length > 0 ? data[0] : null;
 
       if (comp?.certificate_url) {
         const filePath = extractFilePath(comp.certificate_url, 'certificates');
@@ -145,11 +146,15 @@ export function useCompetitions() {
         .from('competitions')
         .update(updates)
         .eq('id', id)
-        .select()
-        .single();
+        .select();
 
       if (err) throw err;
-      setCompetitions(prev => prev.map(c => c.id === id ? data : c));
+      if (!data || data.length === 0) {
+        throw new Error('Competition not found or you do not have permission to update it');
+      }
+
+      const updatedComp = data[0];
+      setCompetitions(prev => prev.map(c => c.id === id ? updatedComp : c));
       showSuccess('Competition updated! 🏆');
       return { data, error: null };
     } catch (err) {

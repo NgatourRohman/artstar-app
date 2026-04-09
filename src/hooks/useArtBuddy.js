@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../hooks/useProfile';
@@ -6,13 +7,14 @@ import { useArtworks } from '../hooks/useArtworks';
 import { useBadges } from '../hooks/useBadges';
 
 export function useArtBuddy() {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { profile } = useProfile();
   const { artworks } = useArtworks();
   const { badgeCount } = useBadges();
   
   const [messages, setMessages] = useState([
-    { role: 'ai', text: 'Halo! Aku ArtBuddy, teman kreatifmu. Ada yang bisa aku bantu hari ini? ✨🎨' }
+    { role: 'ai', text: t('buddy.greeting') }
   ]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +41,8 @@ export function useArtBuddy() {
         userName: profile?.display_name || 'Artis Cilik',
         artworkCount: artworks.length,
         badgeCount: badgeCount,
-        currentPath: window.location.pathname
+        currentPath: window.location.pathname,
+        language: i18n.language
       };
 
       const { data, error: funcError } = await supabase.functions.invoke('artbuddy-chat', {
@@ -61,20 +64,20 @@ export function useArtBuddy() {
           if (funcError.status === 504) errorCode = 'TIMEOUT';
         }
 
-        let friendlyMessage = 'Aduh, ArtBuddy lagi pusing sedikit. Coba lagi nanti ya! 🌈';
+        let friendlyMessage = t('buddy.error_general');
         
         switch (errorCode) {
           case 'QUOTA_EXCEEDED':
-            friendlyMessage = 'Wah, tangki ideku lagi kosong nih. Tunggu sebentar ya, aku lagi isi bensin kreatif dulu! 🎨🚀';
+            friendlyMessage = t('buddy.error_quota');
             break;
           case 'SAFETY_BLOCK':
-            friendlyMessage = 'ArtBuddy rasa itu bukan ide yang bagus buat digambar. Cari ide seru lainnya yuk! ✨🌟';
+            friendlyMessage = t('buddy.error_safety');
             break;
           case 'TIMEOUT':
-            friendlyMessage = 'Sinyal kreatifku lagi pelan banget... Coba kirim pesan lagi ya! 📡💫';
+            friendlyMessage = t('buddy.error_timeout');
             break;
           case 'UNAUTHORIZED':
-            friendlyMessage = 'ArtBuddy cuma bisa ngobrol sama yang sudah login. Masuk dulu yuk! 🔐';
+            friendlyMessage = t('buddy.error_auth');
             break;
         }
 
@@ -83,8 +86,8 @@ export function useArtBuddy() {
       }
 
       if (data?.error) {
-        let msg = 'Aduh, ArtBuddy lagi pusing sedikit.';
-        if (data.error === 'SAFETY_BLOCK') msg = 'ArtBuddy rasa itu bukan ide yang bagus buat digambar. Cari ide seru lainnya yuk! ✨🌟';
+        let msg = t('buddy.error_general');
+        if (data.error === 'SAFETY_BLOCK') msg = t('buddy.error_safety');
         setMessages(prev => [...prev, { role: 'ai', text: msg, isError: true }]);
         return;
       }
@@ -93,7 +96,7 @@ export function useArtBuddy() {
       setMessages(prev => [...prev, aiResponse]);
     } catch (err) {
       console.error('ArtBuddy Fatal Error:', err);
-      const errorMessage = 'Wah, sepertinya sinyal kreatifku lagi terganggu. Coba klik tombol "Coba Lagi" ya! 🌈';
+      const errorMessage = t('buddy.error_fatal');
       setMessages(prev => [...prev, { role: 'ai', text: errorMessage, isError: true }]);
     } finally {
       setLoading(false);

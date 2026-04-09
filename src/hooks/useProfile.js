@@ -29,6 +29,8 @@ export function useProfile() {
           id: user.id,
           display_name: user.user_metadata?.display_name || 'Little Artist',
           avatar_url: '🦄',
+          xp: 0,
+          level: 1,
         };
         const { data: created } = await supabase
           .from('profiles')
@@ -72,5 +74,21 @@ export function useProfile() {
     }
   }, [user, showSuccess, showError]);
 
-  return { profile, loading, fetchProfile, updateProfile };
+  const addXP = useCallback(async (amount) => {
+    if (!profile) return;
+
+    const newXP = (profile.xp || 0) + amount;
+    const newLevel = Math.floor(newXP / 100) + 1;
+    const oldLevel = profile.level || 1;
+
+    const updates = { xp: newXP, level: newLevel };
+    
+    if (newLevel > oldLevel) {
+      showSuccess(`WADIDAW! Kamu naik ke Level ${newLevel}! 🎉🚀`);
+    }
+
+    await updateProfile(updates);
+  }, [profile, updateProfile, showSuccess]);
+
+  return { profile, loading, fetchProfile, updateProfile, addXP };
 }

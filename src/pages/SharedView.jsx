@@ -119,6 +119,33 @@ export default function SharedView() {
               {t(`gallery.categories.${item.category}`, item.category)}
             </span>
           </div>
+
+          <div className="shared-metadata-grid" style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', 
+            gap: 12, 
+            marginTop: 24,
+            textAlign: 'left'
+          }}>
+            {item.location && (
+              <div style={{ padding: 12, borderRadius: 12, background: 'rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--color-text-tertiary)', marginBottom: 4 }}>📍 {t('common.place').toUpperCase()}</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{item.location}</div>
+              </div>
+            )}
+            {item.tools && (
+              <div style={{ padding: 12, borderRadius: 12, background: 'rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--color-text-tertiary)', marginBottom: 4 }}>🎨 {t('common.tools').toUpperCase()}</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{item.tools}</div>
+              </div>
+            )}
+            {item.purpose && (
+              <div style={{ padding: 12, borderRadius: 12, background: 'rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--color-text-tertiary)', marginBottom: 4 }}>🎯 {t('common.purpose').toUpperCase()}</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{item.purpose}</div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 

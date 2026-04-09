@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, Wand2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ChatWindow({ messages, onSendMessage, onRetry, loading, isOpen }) {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
   
@@ -25,9 +27,9 @@ export default function ChatWindow({ messages, onSendMessage, onRetry, loading, 
   };
 
   const quickActions = [
-    { label: 'Beri ide gambar! 🎨', prompt: 'Beri aku ide gambar yang seru hari ini!' },
-    { label: 'Tips mewarnai 🖍️', prompt: 'Beri aku tips mewarnai yang bagus!' },
-    { label: 'Tantangan harian 🏆', prompt: 'Beri aku tantangan menggambar singkat!' }
+    { label: t('buddy.action_idea'), prompt: t('buddy.prompt_idea') },
+    { label: t('buddy.action_tips'), prompt: t('buddy.prompt_tips') },
+    { label: t('buddy.action_challenge'), prompt: t('buddy.prompt_challenge') }
   ];
 
   return (
@@ -57,7 +59,7 @@ export default function ChatWindow({ messages, onSendMessage, onRetry, loading, 
                   animate={{ opacity: [0.3, 1, 0.3] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
                 >
-                  Sedang berpikir... ✨
+                  {t('buddy.thinking')}
                 </motion.span>
               </div>
             )}
@@ -71,7 +73,7 @@ export default function ChatWindow({ messages, onSendMessage, onRetry, loading, 
                 onClick={onRetry}
                 disabled={loading}
               >
-                Coba Lagi 🔄
+                {t('buddy.retry')}
               </button>
             ) : (
               quickActions.map((action, idx) => (
@@ -91,7 +93,7 @@ export default function ChatWindow({ messages, onSendMessage, onRetry, loading, 
             <input
               type="text"
               className="chat-input"
-              placeholder="Tanya ArtBuddy..."
+              placeholder={t('buddy.placeholder')}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={loading}

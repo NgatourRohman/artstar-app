@@ -31,8 +31,95 @@
       "craft": "Kerajinan",
       "other": "Lainnya"
     },
+    "place_label": "📍 Tempat",
+    "tools_label": "🖌️ Alat",
+    "purpose_label": "🎯 Tujuan",
+    "place_placeholder": "Contoh: Di Rumah, Di Sekolah...",
+    "tools_placeholder": "Contoh: Crayon, Cat Air, Tablet...",
+    "purpose_placeholder": "Contoh: Hadiah Ibu, Belajar mewarnai...",
     "empty_title": "Wah, masih kosong di sini!",
     "empty_subtitle": "Ayo tambahkan mahakarya pertamamu!"
+  },
+  "competitions": {
+    "title": "Lomba Saya",
+    "name_label": "Nama Lomba",
+    "name_placeholder": "Contoh: Lomba Menggambar Nasional",
+    "notes_label": "Catatan",
+    "notes_placeholder": "Tuliskan kesan atau pengalamanmu di sini...",
+    "results": {
+      "participated": "Peserta",
+      "finalist": "Finalis",
+      "winner": "Juara",
+      "grand_winner": "Juara Umum"
+    },
+    "status": {
+      "registered": "Daftar",
+      "selection": "Seleksi",
+      "final": "Final",
+      "results": "Hasil"
+    },
+    "status_label": "Status Progres",
+    "update_status": "UPDATE STATUS PROGRES",
+    "final_result": "HASIL AKHIR",
+    "linked_artworks": "KARYA TERKAIT",
+    "no_linked_artworks": "Belum ada karya yang dihubungkan ke lomba ini.",
+    "empty_title": "Belum ada lomba!",
+    "empty_subtitle": "Waktunya tunjukkan senimu ke dunia!"
+  },
+  "buddy": {
+    "title": "ArtBuddy",
+    "greeting": "Halo! Aku ArtBuddy, teman kreatifmu. Ada yang bisa aku bantu hari ini? ✨🎨",
+    "thinking": "Sedang berpikir... ✨",
+    "placeholder": "Tanya ArtBuddy...",
+    "retry": "Coba Lagi 🔄",
+    "error_general": "Aduh, ArtBuddy lagi pusing sedikit. Coba lagi nanti ya! 🌈",
+    "error_quota": "Wah, tangki ideku lagi kosong nih. Tunggu sebentar ya, aku lagi isi bensin kreatif dulu! 🎨🚀",
+    "error_safety": "ArtBuddy rasa itu bukan ide yang bagus buat digambar. Cari ide seru lainnya yuk! ✨🌟",
+    "error_timeout": "Sinyal kreatifku lagi pelan banget... Coba kirim pesan lagi ya! 📡💫",
+    "error_auth": "ArtBuddy cuma bisa ngobrol sama yang sudah login. Masuk dulu yuk! 🔐",
+    "error_fatal": "Wah, sepertinya sinyal kreatifku lagi terganggu. Coba klik tombol \"Coba Lagi\" ya! 🌈",
+    "action_idea": "Beri ide gambar! 🎨",
+    "action_tips": "Tips mewarnai 🖍️",
+    "action_challenge": "Tantangan harian 🏆",
+    "prompt_idea": "Beri aku ide gambar yang seru hari ini!",
+    "prompt_tips": "Beri aku tips mewarnai yang bagus!",
+    "prompt_challenge": "Beri aku tantangan menggambar singkat!"
+  },
+  "timeline": {
+    "title": "Perjalanan Seniku",
+    "today": "Hari Ini",
+    "yesterday": "Kemarin",
+    "uploaded_artwork": "Mengunggah karya seni",
+    "entered_competition": "Mengikuti perlombaan",
+    "earned_badge": "Mendapat lencana baru!",
+    "empty_title": "Perjalananmu dimulai sekarang!",
+    "empty_subtitle": "Tambahkan karya seni untuk melihatnya di sini",
+    "type": {
+      "artwork": "Karya Seni",
+      "competition": "Lomba",
+      "badge": "Lencana"
+    }
+  },
+  "analytics": {
+    "title": "Laporan Petualangan",
+    "hero_title": "Kamu Hebat, {{name}}!",
+    "hero_subtitle": "Ayo lihat seberapa jauh perjalanan senimu sejauh ini!",
+    "total_artworks": "Total Karya",
+    "total_competitions": "Total Lomba",
+    "growth_title": "PERKEMBANGAN SENIMU",
+    "win_rate_title": "LAJU JUARA",
+    "timeline_title": "CATATAN SERUMU",
+    "no_activity": "Mulai petualanganmu dengan membuat karya pertama! ✨",
+    "win_rate": {
+      "start": "Ayo mulai petualanganmu!",
+      "often": "Wah, Kamu Sering Menang! 🏆",
+      "great": "Hebat! Terus Semangat Ya! ✨",
+      "keep_going": "Perlu Semangat Lagi, Yuk Coba Terus! 💪"
+    },
+    "narrative": {
+      "art": "Kamu membuat karya keren berjudul \"{{title}}\" 🎨",
+      "comp": "Kamu ikut petualangan di \"{{name}}\" 🏆"
+    }
   },
   "profile": {
     "member_since": "Anggota sejak {{date}}",
@@ -83,29 +170,23 @@
       "streak_20": { "name": "Kebiasaan Emas", "desc": "Konsisten 20 minggu!" }
     }
   },
-  "competitions": {
-    "title": "Lomba Saya",
-    "results": {
-      "participated": "Peserta",
-      "finalist": "Finalis",
-      "winner": "Juara",
-      "grand_winner": "Juara Umum"
-    },
-    "empty_title": "Belum ada lomba!",
-    "empty_subtitle": "Waktunya tunjukkan senimu ke dunia!"
+  "gamification": {
+    "xp_left": "{{amount}} XP lagi untuk Level {{level}}! 🚀",
+    "see_detail": "LIHAT DETAIL ✨"
   },
-  "timeline": {
-    "title": "Perjalanan Seniku",
-    "uploaded_artwork": "Mengunggah karya seni",
-    "entered_competition": "Mengikuti perlombaan",
-    "earned_badge": "Mendapat lencana baru!",
-    "empty_title": "Perjalananmu dimulai sekarang!",
-    "empty_subtitle": "Tambahkan karya seni untuk melihatnya di sini",
-    "type": {
-      "artwork": "Karya Seni",
-      "competition": "Lomba",
-      "badge": "Lencana"
-    }
+  "tour": {
+    "step_welcome_title": "Halo Artis Cilik! 👋",
+    "step_welcome_content": "Selamat datang di ArtStar ⭐. Tempat keren untuk menyimpan semua karya senimu!",
+    "step_xp_title": "Lihat Levelmu! 🚀",
+    "step_xp_content": "Di sini kamu bisa lihat seberapa hebat karyamu. Kumpulkan XP untuk naik level!",
+    "step_add_title": "Tombol Ajaib 🎨",
+    "step_add_content": "Tekan tombol ini untuk upload karya barumu atau ikut lomba yang seru!",
+    "step_compete_title": "Piala Kemenangan 🏆",
+    "step_compete_content": "Cek semua lomba yang kamu ikuti di sini. Ayo kumpulkan banyak piala!",
+    "next": "Lanjut",
+    "back": "Sebelumnya",
+    "start": "Ayo Mulai! ✨",
+    "skip": "Lewati"
   },
   "common": {
     "add_artwork": "Tambah Karya",
@@ -120,6 +201,12 @@
     "upload_image": "Ketuk atau seret untuk unggah gambar",
     "name": "Nama",
     "result": "Hasil",
+    "status": "Status",
+    "place": "Tempat",
+    "tools": "Alat",
+    "purpose": "Tujuan",
+    "none": "Tidak ada",
+    "link_competition": "Hubungkan ke Lomba",
     "upload_certificate": "Unggah Piagam (Opsional)",
     "saving": "Menyimpan...",
     "add_to_gallery": "Tambah ke Galeri!",
@@ -139,7 +226,14 @@
     "back_home": "Kembali ke Beranda",
     "create_portfolio": "Buat Portofoliomu Sendiri!",
     "loading": "Sabar ya, sedang memuat...",
-    "oops": "Waduh!"
+    "oops": "Waduh!",
+    "export_pdf": "EKSPOR PORTOFOLIO PDF ✨",
+    "export_pdf_desc": "Simpan karyamu dalam berkas cetak yang rapi!",
+    "member_since": "Artis Sejak {{date}}",
+    "journey_title": "RINGKASAN PROFIL",
+    "featured_title": "DAFTAR KARYA TERBAIK",
+    "achievements_title": "PRESTASI & LOMBA",
+    "produced_by": "Diproduksi oleh ArtStar - Halaman {{page}} dari {{total}}"
   },
   "auth": {
     "welcome": "Selamat Datang di ArtStar!",

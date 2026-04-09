@@ -9,6 +9,7 @@ import { useArtworks } from '../hooks/useArtworks';
 import { useCompetitions } from '../hooks/useCompetitions';
 import { useBadges } from '../hooks/useBadges';
 import { DEMO_PROFILE } from '../lib/demoData';
+import { generatePortfolioPDF } from '../lib/ExportUtils';
 
 const AVATAR_OPTIONS = [
   '🦄', '🐱', '🐶', '🦊', '🐼',
@@ -49,8 +50,17 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
-    await signOut();
     navigate('/login');
+  };
+
+  const handleExportPDF = () => {
+    generatePortfolioPDF({
+      profile: displayProfile,
+      artworks,
+      competitions,
+      badgeCount,
+      t
+    });
   };
 
   const memberSince = displayProfile?.created_at
@@ -126,6 +136,26 @@ export default function Profile() {
           <div className="stat-card-info">
             <span className="stat-card-label" style={{ fontWeight: 700, color: 'var(--color-text)', fontSize: 'var(--text-base)' }}>{t('badges.title')}</span>
             <span className="stat-card-label">{t('profile.earned', { count: badgeCount })}</span>
+          </div>
+        </button>
+
+        <button
+          className="stat-card"
+          onClick={handleExportPDF}
+          style={{ 
+            cursor: 'pointer', 
+            border: 'none', 
+            textAlign: 'left',
+            background: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)',
+            border: '2px dashed #3B82F6'
+          }}
+        >
+          <div className="stat-card-icon" style={{ background: '#3B82F6' }}>
+            <Award size={22} color="white" />
+          </div>
+          <div className="stat-card-info">
+            <span className="stat-card-label" style={{ fontWeight: 800, color: '#1E40AF', fontSize: 'var(--text-base)' }}>{t('common.export_pdf')}</span>
+            <span className="stat-card-label" style={{ color: '#1E40AF' }}>{t('common.export_pdf_desc')}</span>
           </div>
         </button>
 

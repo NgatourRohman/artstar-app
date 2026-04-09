@@ -45,7 +45,7 @@ export function useArtworks() {
     }
   }, [user]);
 
-  const addArtwork = useCallback(async ({ title, description, category, imageFile, date }) => {
+  const addArtwork = useCallback(async ({ title, description, category, imageFile, date, location, tools, purpose, competition_id }) => {
     if (isDemoMode) {
       const newArt = {
         id: `art-${Date.now()}`,
@@ -53,6 +53,10 @@ export function useArtworks() {
         title,
         description,
         category,
+        location,
+        tools,
+        purpose,
+        competition_id,
         image_url: imageFile ? URL.createObjectURL(imageFile) : null,
         created_at: new Date().toISOString(),
         uploaded_at: new Date().toISOString(),
@@ -87,6 +91,10 @@ export function useArtworks() {
           title,
           description,
           category,
+          location,
+          tools,
+          purpose,
+          competition_id,
           image_url,
           created_at: date ? new Date(date).toISOString() : new Date().toISOString()
         })

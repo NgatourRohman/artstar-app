@@ -75,13 +75,13 @@ export default function Timeline() {
 
       let groupLabel;
       if (itemDate.getTime() === today.getTime()) {
-        groupLabel = i18n.language === 'id' ? 'Hari Ini' : 'Today';
+        groupLabel = t('timeline.today');
       } else if (itemDate.getTime() === yesterday.getTime()) {
-        groupLabel = i18n.language === 'id' ? 'Kemarin' : 'Yesterday';
+        groupLabel = t('timeline.yesterday');
       } else {
         groupLabel = new Date(item.date).toLocaleDateString(i18n.language === 'id' ? 'id-ID' : 'en-US', {
           day: 'numeric',
-          month: 'short',
+          month: 'long',
           year: 'numeric'
         });
       }

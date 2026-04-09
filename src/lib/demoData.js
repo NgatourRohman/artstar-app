@@ -5,6 +5,8 @@ export const DEMO_PROFILE = {
   id: 'demo-user-1',
   display_name: 'Little Artist',
   avatar_url: '🦄',
+  xp: 0,
+  level: 1,
   created_at: '2025-09-01T00:00:00Z',
 };
 

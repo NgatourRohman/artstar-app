@@ -4,8 +4,9 @@ import { useSearchParams } from 'react-router-dom';
 import { Plus, Share2, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCompetitions } from '../hooks/useCompetitions';
-import { useBadges } from '../hooks/useBadges';
+import { useProfile } from '../hooks/useProfile';
 import { useArtworks } from '../hooks/useArtworks';
+import { useBadges } from '../hooks/useBadges';
 import { useShare } from '../hooks/useShare';
 import ImageUploader from '../components/ui/ImageUploader';
 import EmptyState from '../components/ui/EmptyState';
@@ -18,10 +19,18 @@ const RESULT_CONFIG = {
   participated: { label: 'Participated', emoji: '⭐', bg: 'linear-gradient(135deg, #D1FAE5, #A7F3D0)', color: '#065F46' },
 };
 
+const STATUS_CONFIG = {
+  registered: { label: 'registered', emoji: '📝', color: '#6B7280', bg: '#F3F4F6' },
+  selection: { label: 'selection', emoji: '🔍', color: '#2563EB', bg: '#DBEAFE' },
+  final: { label: 'final', emoji: '🔥', color: '#D97706', bg: '#FEF3C7' },
+  results: { label: 'results', emoji: '🏁', color: '#059669', bg: '#D1FAE5' },
+};
+
 export default function Competitions() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { competitions, addCompetition, deleteCompetition } = useCompetitions();
+  const { competitions, addCompetition, updateCompetition, deleteCompetition } = useCompetitions();
   const { artworks } = useArtworks();
+  const { profile, addXP } = useProfile();
   const { checkAndUnlockBadges } = useBadges();
   const { shareUrl, createShareLink, copyToClipboard } = useShare();
   const { t, i18n } = useTranslation();
@@ -36,6 +45,7 @@ export default function Competitions() {
   const [name, setName] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [result, setResult] = useState('participated');
+  const [status, setStatus] = useState('registered');
   const [notes, setNotes] = useState('');
   const [certFile, setCertFile] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -53,7 +63,7 @@ export default function Competitions() {
 
     setSaving(true);
     const { data, error } = await addCompetition({
-      name, date, result, notes,
+      name, date, result, status, notes,
       certificateFile: certFile,
     });
     setSaving(false);
@@ -63,8 +73,12 @@ export default function Competitions() {
       setName('');
       setDate(new Date().toISOString().split('T')[0]);
       setResult('participated');
+      setStatus('registered');
       setNotes('');
       setCertFile(null);
+
+      // Add XP for registering
+      await addXP(20);
 
       const hasWin = competitions.some(c => c.result === 'winner' || c.result === 'grand_winner') 
         || result === 'winner' || result === 'grand_winner';
@@ -107,6 +121,30 @@ export default function Competitions() {
     });
   };
 
+  const handleUpdateStatus = async (status) => {
+    if (!selectedComp) return;
+    const { data } = await updateCompetition(selectedComp.id, { status });
+    if (data) {
+      setSelectedComp(data);
+      if (status === 'selection' || status === 'final') {
+        await addXP(40);
+      } else if (status === 'results') {
+        // results status handled by handleUpdateResult
+      }
+    }
+  };
+
+  const handleUpdateResult = async (result) => {
+    if (!selectedComp) return;
+    const { data } = await updateCompetition(selectedComp.id, { result, status: 'results' });
+    if (data) {
+      setSelectedComp(data);
+      if (result === 'winner' || result === 'grand_winner') {
+        await addXP(100);
+      }
+    }
+  };
+
   return (
     <div className="page-enter">
       <ConfettiEffect active={showConfetti} />
@@ -139,7 +177,19 @@ export default function Competitions() {
                   {resultConf.emoji}
                 </div>
                 <div className="competition-card-info">
-                  <div className="competition-card-name">{comp.name}</div>
+                  <div className="competition-card-name" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {comp.name}
+                    <span style={{ 
+                      fontSize: '10px', 
+                      padding: '2px 6px', 
+                      borderRadius: '4px',
+                      background: STATUS_CONFIG[comp.status]?.bg || '#F3F4F6',
+                      color: STATUS_CONFIG[comp.status]?.color || '#6B7280',
+                      fontWeight: 700
+                    }}>
+                      {t(`competitions.status.${comp.status}`).toUpperCase()}
+                    </span>
+                  </div>
                   <div className="competition-card-date">{formatDate(comp.date)}</div>
                 </div>
                 <span
@@ -173,13 +223,13 @@ export default function Competitions() {
 
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label className="form-label" htmlFor="comp-name">{t('common.name')}</label>
+                <label className="form-label" htmlFor="comp-name">{t('competitions.name_label')}</label>
                 <input
                   id="comp-name"
                   type="text"
                   className="form-input"
-                  placeholder={t('common.name')}
-                  value={name}
+                  placeholder={t('competitions.name_placeholder')}
+              value={name}
                   onChange={e => setName(e.target.value)}
                   required
                 />
@@ -213,11 +263,27 @@ export default function Competitions() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" htmlFor="comp-notes">{t('common.description')}</label>
+                <label className="form-label" htmlFor="comp-status">📈 {t('competitions.status_label')}</label>
+                <select
+                  id="comp-status"
+                  className="form-select"
+                  value={status}
+                  onChange={e => setStatus(e.target.value)}
+                >
+                  <option value="registered">📝 {t('competitions.status.registered')}</option>
+                  <option value="selection">🔍 {t('competitions.status.selection')}</option>
+                  <option value="final">🔥 {t('competitions.status.final')}</option>
+                  <option value="results">🏁 {t('competitions.status.results')}</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="comp-notes">{t('competitions.notes_label')}</label>
                 <textarea
                   id="comp-notes"
                   className="form-textarea"
-                  value={notes}
+                  placeholder={t('competitions.notes_placeholder')}
+              value={notes}
                   onChange={e => setNotes(e.target.value)}
                   rows={3}
                 />
@@ -263,6 +329,111 @@ export default function Competitions() {
             {selectedComp.notes && (
               <p className="detail-description">{selectedComp.notes}</p>
             )}
+
+            <div className="status-update-controls" style={{ 
+              background: 'var(--color-bg-tertiary)', 
+              padding: 'var(--space-md)', 
+              borderRadius: 'var(--radius-lg)',
+              marginBottom: 'var(--space-lg)'
+            }}>
+              <h4 style={{ fontSize: 'var(--text-xs)', fontWeight: 800, color: 'var(--color-text-tertiary)', marginBottom: 8 }}>
+                {t('competitions.update_status')}
+              </h4>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
+                  <button
+                    key={key}
+                    onClick={() => handleUpdateStatus(key)}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: 'var(--radius-md)',
+                      fontSize: '12px',
+                      border: 'none',
+                      background: selectedComp.status === key ? cfg.color : 'white',
+                      color: selectedComp.status === key ? 'white' : 'var(--color-text)',
+                      cursor: 'pointer',
+                      fontWeight: 600,
+                      boxShadow: 'var(--shadow-sm)'
+                    }}
+                  >
+                    {cfg.emoji} {t(`competitions.status.${key}`)}
+                  </button>
+                ))}
+              </div>
+
+              {selectedComp.status === 'results' && (
+                <>
+                  <h4 style={{ fontSize: 'var(--text-xs)', fontWeight: 800, color: 'var(--color-text-tertiary)', marginTop: 16, marginBottom: 8 }}>
+                    {t('competitions.final_result')}
+                  </h4>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {Object.entries(RESULT_CONFIG).map(([key, cfg]) => (
+                      <button
+                        key={key}
+                        onClick={() => handleUpdateResult(key)}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: 'var(--radius-md)',
+                          fontSize: '12px',
+                          border: 'none',
+                          background: selectedComp.result === key ? '#92400E' : 'white',
+                          color: selectedComp.result === key ? 'white' : 'var(--color-text)',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          boxShadow: 'var(--shadow-sm)'
+                        }}
+                      >
+                        {cfg.emoji} {t(`competitions.results.${key}`)}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="linked-artworks" style={{ marginBottom: 'var(--space-lg)' }}>
+              <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 700, marginBottom: 'var(--space-md)' }}>
+                🖼️ {t('competitions.linked_artworks')}
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-sm)' }}>
+                {artworks.filter(a => a.competition_id === selectedComp.id).map(art => (
+                  <div key={art.id} style={{ 
+                    position: 'relative', 
+                    borderRadius: 'var(--radius-md)', 
+                    overflow: 'hidden',
+                    aspectRatio: '1',
+                    background: 'var(--color-bg-tertiary)'
+                  }}>
+                    <img src={art.image_url} alt={art.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <div style={{ 
+                      position: 'absolute', 
+                      bottom: 0, 
+                      left: 0, 
+                      right: 0, 
+                      padding: '4px 8px', 
+                      background: 'rgba(0,0,0,0.5)', 
+                      color: 'white', 
+                      fontSize: '10px' 
+                    }}>
+                      {art.title}
+                    </div>
+                  </div>
+                ))}
+                {artworks.filter(a => a.competition_id === selectedComp.id).length === 0 && (
+                  <div style={{ 
+                    gridColumn: 'span 2', 
+                    padding: 'var(--space-md)', 
+                    textAlign: 'center', 
+                    background: 'var(--color-bg-secondary)',
+                    borderRadius: 'var(--radius-md)',
+                    color: 'var(--color-text-tertiary)',
+                    fontSize: 'var(--text-sm)'
+                  }}>
+                    {t('competitions.no_linked_artworks')}
+                  </div>
+                )}
+              </div>
+            </div>
 
             {selectedComp.certificate_url && (
               <img

@@ -4,6 +4,8 @@ import { useSearchParams } from 'react-router-dom';
 import { Plus, Share2, Trash2, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useArtworks } from '../hooks/useArtworks';
+import { useCompetitions } from '../hooks/useCompetitions';
+import { useProfile } from '../hooks/useProfile';
 import { useBadges } from '../hooks/useBadges';
 import { useShare } from '../hooks/useShare';
 import ImageUploader from '../components/ui/ImageUploader';
@@ -32,6 +34,8 @@ const CATEGORY_COLORS = {
 export default function Gallery() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { artworks, fetchArtworks, addArtwork, deleteArtwork } = useArtworks();
+  const { competitions } = useCompetitions();
+  const { profile, addXP } = useProfile();
   const { checkAndUnlockBadges, newlyUnlocked, clearNewlyUnlocked } = useBadges();
   const { shareUrl, createShareLink, copyToClipboard } = useShare();
   const { t, i18n } = useTranslation();
@@ -48,6 +52,10 @@ export default function Gallery() {
   const [category, setCategory] = useState('drawing');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [imageFile, setImageFile] = useState(null);
+  const [location, setLocation] = useState('');
+  const [tools, setTools] = useState('');
+  const [purpose, setPurpose] = useState('');
+  const [competitionId, setCompetitionId] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -67,7 +75,10 @@ export default function Gallery() {
     if (!title.trim()) return;
     
     setSaving(true);
-    const { data, error } = await addArtwork({ title, description, category, imageFile, date });
+    const { data, error } = await addArtwork({ 
+      title, description, category, imageFile, date, 
+      location, tools, purpose, competition_id: competitionId 
+    });
     setSaving(false);
 
     if (!error && data) {
@@ -75,8 +86,14 @@ export default function Gallery() {
       setTitle('');
       setDescription('');
       setCategory('drawing');
-      setDate(new Date().toISOString().split('T')[0]);
       setImageFile(null);
+      setLocation('');
+      setTools('');
+      setPurpose('');
+      setCompetitionId('');
+
+      // Add XP for uploading artwork
+      await addXP(10);
 
       const categories = [...new Set(artworks.map(a => a.category).concat(category))];
       const oneWeekAgo = new Date();
@@ -264,6 +281,60 @@ export default function Gallery() {
                 />
               </div>
 
+              <div className="form-group-row">
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label className="form-label" htmlFor="art-location">📍 {t('gallery.place_label')}</label>
+                  <input
+                    id="art-location"
+                    type="text"
+                    className="form-input"
+                    placeholder={t('gallery.place_placeholder')}
+                value={location}
+                    onChange={e => setLocation(e.target.value)}
+                  />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label className="form-label" htmlFor="art-tools">🖌️ {t('gallery.tools_label')}</label>
+                  <input
+                    id="art-tools"
+                    type="text"
+                    className="form-input"
+                    placeholder={t('gallery.tools_placeholder')}
+                value={tools}
+                    onChange={e => setTools(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="art-purpose">🎯 {t('gallery.purpose_label')}</label>
+                <input
+                  id="art-purpose"
+                  type="text"
+                  className="form-input"
+                  placeholder={t('gallery.purpose_placeholder')}
+              value={purpose}
+                  onChange={e => setPurpose(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="art-comp">🏆 {t('common.link_competition')}</label>
+                <select
+                  id="art-comp"
+                  className="form-select"
+                  value={competitionId}
+                  onChange={e => setCompetitionId(e.target.value)}
+                >
+                  <option value="">-- {t('common.none')} --</option>
+                  {competitions.map(comp => (
+                    <option key={comp.id} value={comp.id}>
+                      {comp.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={saving}>
                 {saving ? `✨ ${t('common.saving')}` : `🚀 ${t('common.add_to_gallery')}`}
               </button>
@@ -313,6 +384,43 @@ export default function Gallery() {
             {selectedArtwork.description && (
               <p className="detail-description">{selectedArtwork.description}</p>
             )}
+
+            <div className="detail-info-grid" style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr 1fr', 
+              gap: 'var(--space-md)',
+              background: 'var(--color-bg-secondary)',
+              padding: 'var(--space-md)',
+              borderRadius: 'var(--radius-lg)',
+              marginBottom: 'var(--space-lg)'
+            }}>
+              {selectedArtwork.location && (
+                <div className="detail-info-item">
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>📍 {t('common.place').toUpperCase()}</div>
+                  <div style={{ fontSize: 'var(--text-sm)' }}>{selectedArtwork.location}</div>
+                </div>
+              )}
+              {selectedArtwork.tools && (
+                <div className="detail-info-item">
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>🖌️ {t('common.tools').toUpperCase()}</div>
+                  <div style={{ fontSize: 'var(--text-sm)' }}>{selectedArtwork.tools}</div>
+                </div>
+              )}
+              {selectedArtwork.purpose && (
+                <div className="detail-info-item" style={{ gridColumn: 'span 2' }}>
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>🎯 {t('common.purpose').toUpperCase()}</div>
+                  <div style={{ fontSize: 'var(--text-sm)' }}>{selectedArtwork.purpose}</div>
+                </div>
+              )}
+              {selectedArtwork.competition_id && (
+                <div className="detail-info-item" style={{ gridColumn: 'span 2' }}>
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>🏆 {t('common.link_competition').toUpperCase()}</div>
+                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-primary)', fontWeight: 700 }}>
+                    {competitions.find(c => c.id === selectedArtwork.competition_id)?.name || 'Memuat lomba...'}
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="detail-actions">
               <button className="btn btn-primary" onClick={() => handleShare(selectedArtwork)}>

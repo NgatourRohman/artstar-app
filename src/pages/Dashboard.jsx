@@ -58,6 +58,73 @@ export default function Dashboard() {
         <p>{t('dashboard.subtitle')}</p>
       </div>
 
+      <div className="gamification-summary" style={{
+        background: 'var(--color-bg-secondary)',
+        padding: 'var(--space-md) var(--space-lg)',
+        borderRadius: 'var(--radius-xl)',
+        marginBottom: 'var(--space-lg)',
+        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ 
+              background: 'var(--color-primary)', 
+              color: 'white', 
+              padding: '4px 12px', 
+              borderRadius: 'var(--radius-full)',
+              fontSize: 'var(--text-xs)',
+              fontWeight: 800,
+              boxShadow: '0 2px 8px rgba(124, 58, 237, 0.3)'
+            }}>
+              LEVEL {displayProfile?.level || 1}
+            </span>
+            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>
+              XP KAMU: {displayProfile?.xp || 0}
+            </span>
+          </div>
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', fontWeight: 700 }}>
+            {t('gamification.xp_left', { amount: 100 - ((displayProfile?.xp || 0) % 100), level: (displayProfile?.level || 1) + 1 })}
+          </span>
+          <button 
+            className="btn-text" 
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/analytics');
+            }}
+            style={{ 
+              fontSize: '10px', 
+              color: 'var(--color-primary)', 
+              fontWeight: 800,
+              padding: '2px 8px',
+              background: 'white',
+              borderRadius: 'var(--radius-md)',
+              border: 'none',
+              cursor: 'pointer'
+            }}
+          >
+            {t('gamification.see_detail')}
+          </button>
+        </div>
+        <div style={{ 
+          height: 12, 
+          background: 'rgba(0,0,0,0.05)', 
+          borderRadius: 'var(--radius-full)', 
+          overflow: 'hidden',
+          position: 'relative'
+        }}>
+          <div style={{ 
+            width: `${(displayProfile?.xp || 0) % 100}%`,
+            height: '100%',
+            background: 'linear-gradient(90deg, var(--color-primary), #A78BFA)',
+            borderRadius: 'var(--radius-full)',
+            transition: 'width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+          }} />
+        </div>
+      </div>
+
       <div className="stats-row">
         <div 
           className="stat-card" 

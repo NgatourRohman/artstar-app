@@ -13,6 +13,7 @@ import Timeline from './pages/Timeline';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import SharedView from './pages/SharedView';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
 
 function ProtectedRoute({ children }) {
   const { session, isDemoMode } = useAuth();
@@ -56,6 +57,7 @@ function AppRoutes() {
         <Route path="/competitions" element={<Competitions />} />
         <Route path="/badges" element={<Badges />} />
         <Route path="/timeline" element={<Timeline />} />
+        <Route path="/analytics" element={<AnalyticsDashboard />} />
         <Route path="/profile" element={<Profile />} />
       </Route>
 

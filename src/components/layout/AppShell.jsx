@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Header from './Header';
 import BottomNav from './BottomNav';
 import ArtBuddy from '../ui/ArtBuddy/ArtBuddy';
+import GuidedTour from '../ui/GuidedTour';
 
 export default function AppShell() {
   const { scrollY } = useScroll();
@@ -28,6 +29,7 @@ export default function AppShell() {
       </main>
       <BottomNav />
       <ArtBuddy />
+      <GuidedTour />
     </div>
   );
 }

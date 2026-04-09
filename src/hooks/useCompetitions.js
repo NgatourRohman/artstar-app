@@ -36,7 +36,7 @@ export function useCompetitions() {
     }
   }, [user]);
 
-  const addCompetition = useCallback(async ({ name, date, result, notes, certificateFile }) => {
+  const addCompetition = useCallback(async ({ name, date, result, status, notes, certificateFile }) => {
     if (isDemoMode) {
       const newComp = {
         id: `comp-${Date.now()}`,
@@ -44,6 +44,7 @@ export function useCompetitions() {
         name,
         date,
         result,
+        status: status || 'registered',
         notes,
         certificate_url: certificateFile ? URL.createObjectURL(certificateFile) : null,
         created_at: new Date().toISOString(),
@@ -76,6 +77,7 @@ export function useCompetitions() {
           name,
           date,
           result,
+          status: status || 'registered',
           notes,
           certificate_url,
         })
@@ -132,9 +134,41 @@ export function useCompetitions() {
     }
   }, [showSuccess, showError]);
 
+  const updateCompetition = useCallback(async (id, updates) => {
+    if (isDemoMode) {
+      setCompetitions(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
+      return { data: { id, ...updates }, error: null };
+    }
+
+    try {
+      const { data, error: err } = await supabase
+        .from('competitions')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (err) throw err;
+      setCompetitions(prev => prev.map(c => c.id === id ? data : c));
+      showSuccess('Competition updated! 🏆');
+      return { data, error: null };
+    } catch (err) {
+      showError(`Failed to update competition: ${err.message}`);
+      return { data: null, error: err.message };
+    }
+  }, [showSuccess, showError]);
+
   useEffect(() => {
     fetchCompetitions();
   }, [fetchCompetitions]);
 
-  return { competitions, loading, error, fetchCompetitions, addCompetition, deleteCompetition };
+  return { 
+    competitions, 
+    loading, 
+    error, 
+    fetchCompetitions, 
+    addCompetition, 
+    updateCompetition,
+    deleteCompetition 
+  };
 }

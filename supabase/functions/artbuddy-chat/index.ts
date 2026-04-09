@@ -43,9 +43,8 @@ serve(async (req) => {
     Use Indonesian as the primary language.
     Keep responses concise and friendly. Use emojis! ✨🎨`;
 
-    // Fetch with Timeout mechanism
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
       const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
@@ -72,7 +71,6 @@ serve(async (req) => {
 
       const data = await response.json();
       
-      // Check for finishReason
       const candidate = data.candidates?.[0];
       const finishReason = candidate?.finishReason;
       

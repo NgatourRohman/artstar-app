@@ -17,7 +17,6 @@ export function useArtBuddy() {
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Auto-greeting logic
   useEffect(() => {
     const hasGreeted = localStorage.getItem('artstar_buddy_greeted');
     if (!hasGreeted && user) {
@@ -29,7 +28,6 @@ export function useArtBuddy() {
   const sendMessage = useCallback(async (text) => {
     if (!text.trim()) return;
 
-    // Add user message to UI immediately
     const userMessage = { role: 'user', text };
     setMessages(prev => [...prev, userMessage]);
     setLoading(true);
@@ -43,10 +41,8 @@ export function useArtBuddy() {
     }
 
     try {
-      // Get session for explicit JWT passing
       const { data: { session } } = await supabase.auth.getSession();
 
-      // Prepare context for the AI
       const context = {
         userName: profile?.display_name || 'Artis Cilik',
         artworkCount: artworks.length,
@@ -54,7 +50,6 @@ export function useArtBuddy() {
         currentPath: window.location.pathname
       };
 
-      // Explicitly pass token for internal verification on the Edge Function
       const { data, error: funcError } = await supabase.functions.invoke('artbuddy-chat', {
         body: { message: text, context },
         headers: {
@@ -62,12 +57,21 @@ export function useArtBuddy() {
         }
       });
 
-      if (funcError) throw funcError;
+      if (funcError) {
+        let errorCode = 'UNKNOWN_ERROR';
+        
+        try {
+          const resText = await funcError.context.context.text();
+          const resData = JSON.parse(resText);
+          errorCode = resData.error || errorCode;
+        } catch (e) {
+          if (funcError.status === 429) errorCode = 'QUOTA_EXCEEDED';
+          if (funcError.status === 504) errorCode = 'TIMEOUT';
+        }
 
-      if (data.error) {
         let friendlyMessage = 'Aduh, ArtBuddy lagi pusing sedikit. Coba lagi nanti ya! 🌈';
         
-        switch (data.error) {
+        switch (errorCode) {
           case 'QUOTA_EXCEEDED':
             friendlyMessage = 'Wah, tangki ideku lagi kosong nih. Tunggu sebentar ya, aku lagi isi bensin kreatif dulu! 🎨🚀';
             break;
@@ -86,10 +90,17 @@ export function useArtBuddy() {
         return;
       }
 
+      if (data?.error) {
+        let msg = 'Aduh, ArtBuddy lagi pusing sedikit.';
+        if (data.error === 'SAFETY_BLOCK') msg = 'ArtBuddy rasa itu bukan ide yang bagus buat digambar. Cari ide seru lainnya yuk! ✨🌟';
+        setMessages(prev => [...prev, { role: 'ai', text: msg, isError: true }]);
+        return;
+      }
+
       const aiResponse = { role: 'ai', text: data.text };
       setMessages(prev => [...prev, aiResponse]);
     } catch (err) {
-      console.error('ArtBuddy Error:', err);
+      console.error('ArtBuddy Fatal Error:', err);
       const errorMessage = 'Wah, sepertinya sinyal kreatifku lagi terganggu. Coba klik tombol "Coba Lagi" ya! 🌈';
       setMessages(prev => [...prev, { role: 'ai', text: errorMessage, isError: true }]);
     } finally {

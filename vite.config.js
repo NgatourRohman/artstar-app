@@ -9,7 +9,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'inline',
       manifestFilename: 'manifest.json',
-      includeAssets: ['favicon.svg', 'icons/*.svg'],
+      includeAssets: ['favicon.svg', 'icons/*.svg', 'icons/*.png'],
       devOptions: {
         enabled: true,
       },
@@ -26,21 +26,21 @@ export default defineConfig({
         categories: ['education', 'entertainment', 'productivity'],
         icons: [
           {
-            src: '/icons/favicon-app.svg',
+            src: '/icons/favicon-app.png',
             sizes: '192x192',
-            type: 'image/svg+xml',
+            type: 'image/png',
             purpose: 'any',
           },
           {
-            src: '/icons/favicon-app.svg',
+            src: '/icons/favicon-app.png',
             sizes: '512x512',
-            type: 'image/svg+xml',
+            type: 'image/png',
             purpose: 'maskable',
           },
           {
-            src: '/icons/favicon-app.svg',
+            src: '/icons/favicon-app.png',
             sizes: '512x512',
-            type: 'image/svg+xml',
+            type: 'image/png',
             purpose: 'any',
           },
         ],

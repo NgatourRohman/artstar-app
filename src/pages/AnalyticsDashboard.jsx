@@ -18,28 +18,31 @@ export default function AnalyticsDashboard() {
   
   const [viewMode, setViewMode] = useState('weekly'); // 'weekly' | 'monthly'
 
-  // Helper to get Monday of the week
-  const getMonday = (date) => {
+  // Helper to get Monday of the week in UTC
+  const getUTCMonday = (date) => {
     const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(d.setDate(diff));
+    const day = d.getUTCDay();
+    const diff = d.getUTCDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), diff));
+    monday.setUTCHours(0, 0, 0, 0);
+    return monday;
   };
 
   const chartData = useMemo(() => {
-    const results = [];
     const today = new Date();
     const currentLang = i18n.language === 'id' ? 'id-ID' : 'en-US';
 
     if (viewMode === 'weekly') {
       const weeks = [];
-      // Initialize last 8 weeks
+      // Initialize last 8 weeks using UTC
       for (let i = 7; i >= 0; i--) {
-        const monday = getMonday(new Date(today.getFullYear(), today.getMonth(), today.getDate() - (i * 7)));
+        const referenceDate = new Date(today);
+        referenceDate.setUTCDate(today.getUTCDate() - (i * 7));
+        const monday = getUTCMonday(referenceDate);
         const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
+        sunday.setUTCDate(monday.getUTCDate() + 6);
         
-        const label = `${monday.toLocaleDateString(currentLang, { day: 'numeric', month: 'short' })} - ${sunday.toLocaleDateString(currentLang, { day: 'numeric', month: 'short' })}`;
+        const label = `${monday.getUTCDate()} ${monday.toLocaleDateString(currentLang, { month: 'short' })} - ${sunday.getUTCDate()} ${sunday.toLocaleDateString(currentLang, { month: 'short' })}`;
         
         weeks.push({
           id: monday.toISOString().split('T')[0],
@@ -52,25 +55,25 @@ export default function AnalyticsDashboard() {
 
       artworks.forEach(art => {
         const artDate = new Date(art.created_at || art.date);
-        const artMonday = getMonday(artDate).toISOString().split('T')[0];
+        const artMonday = getUTCMonday(artDate).toISOString().split('T')[0];
         const week = weeks.find(w => w.id === artMonday);
         if (week) week.artworks += 1;
       });
 
       competitions.forEach(comp => {
         const compDate = new Date(comp.date);
-        const compMonday = getMonday(compDate).toISOString().split('T')[0];
+        const compMonday = getUTCMonday(compDate).toISOString().split('T')[0];
         const week = weeks.find(w => w.id === compMonday);
         if (week) week.competitions += 1;
       });
 
       return weeks;
     } else {
-      // Monthly: last 6 months
+      // Monthly: last 6 months using UTC for safety
       const months = [];
       for (let i = 5; i >= 0; i--) {
-        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-        const monthKey = d.toLocaleString(currentLang, { month: 'short' });
+        const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1));
+        const monthKey = d.toLocaleString(currentLang, { month: 'short', timeZone: 'UTC' });
         const id = d.toISOString().slice(0, 7); // YYYY-MM
         
         months.push({
@@ -101,12 +104,11 @@ export default function AnalyticsDashboard() {
   }, [artworks, competitions, viewMode, i18n.language]);
 
   const summaryStats = useMemo(() => {
-    // We only calculate growth for weekly mode as per spec
     const today = new Date();
-    const thisMonday = getMonday(today).toISOString().split('T')[0];
+    const thisMonday = getUTCMonday(today).toISOString().split('T')[0];
     
-    const lastMondayDate = getMonday(today);
-    lastMondayDate.setDate(lastMondayDate.getDate() - 7);
+    const lastMondayDate = getUTCMonday(today);
+    lastMondayDate.setUTCDate(lastMondayDate.getUTCDate() - 7);
     const lastMonday = lastMondayDate.toISOString().split('T')[0];
 
     const stats = {
@@ -117,13 +119,13 @@ export default function AnalyticsDashboard() {
     };
 
     artworks.forEach(art => {
-      const artMonday = getMonday(new Date(art.created_at || art.date)).toISOString().split('T')[0];
+      const artMonday = getUTCMonday(new Date(art.created_at || art.date)).toISOString().split('T')[0];
       if (artMonday === thisMonday) stats.thisWeekArt += 1;
       if (artMonday === lastMonday) stats.lastWeekArt += 1;
     });
 
     competitions.forEach(comp => {
-      const compMonday = getMonday(new Date(comp.date)).toISOString().split('T')[0];
+      const compMonday = getUTCMonday(new Date(comp.date)).toISOString().split('T')[0];
       if (compMonday === thisMonday) stats.thisWeekComp += 1;
       if (compMonday === lastMonday) stats.lastWeekComp += 1;
     });
@@ -275,9 +277,19 @@ export default function AnalyticsDashboard() {
         </div>
       </div>
 
-      <div style={{ width: '100%', height: 260, background: 'white', padding: 'var(--space-lg)', borderRadius: 'var(--radius-2xl)', marginBottom: 'var(--space-xl)', boxShadow: 'var(--shadow-sm)', border: '1px solid #F3F4F6' }}>
+      <div style={{ 
+        width: '100%', 
+        height: 300, 
+        minWidth: 0,
+        background: 'white', 
+        padding: 'var(--space-lg)', 
+        borderRadius: 'var(--radius-2xl)', 
+        marginBottom: 'var(--space-xl)', 
+        boxShadow: 'var(--shadow-sm)', 
+        border: '1px solid #F3F4F6' 
+      }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <BarChart data={chartData} margin={{ top: 20, right: 30, left: -10, bottom: 10 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
             <XAxis 
               dataKey="name" 

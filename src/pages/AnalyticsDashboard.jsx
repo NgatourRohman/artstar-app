@@ -1,10 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
-import { ArrowLeft, TrendingUp, Star, Award, Calendar } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Star, Award, Calendar, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useArtworks } from '../hooks/useArtworks';
 import { useCompetitions } from '../hooks/useCompetitions';
@@ -16,64 +15,151 @@ export default function AnalyticsDashboard() {
   const { artworks } = useArtworks();
   const { competitions } = useCompetitions();
   const { profile } = useProfile();
+  
+  const [viewMode, setViewMode] = useState('weekly'); // 'weekly' | 'monthly'
+
+  // Helper to get Monday of the week
+  const getMonday = (date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+  };
 
   const chartData = useMemo(() => {
-    const months = {};
+    const results = [];
     const today = new Date();
-    
-    // Initialize last 6 months
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-      const monthKey = d.toLocaleString(i18n.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
-  months[monthKey] = { name: monthKey, artworks: 0, competitions: 0 };
+    const currentLang = i18n.language === 'id' ? 'id-ID' : 'en-US';
+
+    if (viewMode === 'weekly') {
+      const weeks = [];
+      // Initialize last 8 weeks
+      for (let i = 7; i >= 0; i--) {
+        const monday = getMonday(new Date(today.getFullYear(), today.getMonth(), today.getDate() - (i * 7)));
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+        
+        const label = `${monday.toLocaleDateString(currentLang, { day: 'numeric', month: 'short' })} - ${sunday.toLocaleDateString(currentLang, { day: 'numeric', month: 'short' })}`;
+        
+        weeks.push({
+          id: monday.toISOString().split('T')[0],
+          name: label,
+          artworks: 0,
+          competitions: 0,
+          isCurrent: i === 0
+        });
+      }
+
+      artworks.forEach(art => {
+        const artDate = new Date(art.created_at || art.date);
+        const artMonday = getMonday(artDate).toISOString().split('T')[0];
+        const week = weeks.find(w => w.id === artMonday);
+        if (week) week.artworks += 1;
+      });
+
+      competitions.forEach(comp => {
+        const compDate = new Date(comp.date);
+        const compMonday = getMonday(compDate).toISOString().split('T')[0];
+        const week = weeks.find(w => w.id === compMonday);
+        if (week) week.competitions += 1;
+      });
+
+      return weeks;
+    } else {
+      // Monthly: last 6 months
+      const months = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const monthKey = d.toLocaleString(currentLang, { month: 'short' });
+        const id = d.toISOString().slice(0, 7); // YYYY-MM
+        
+        months.push({
+          id,
+          name: monthKey,
+          artworks: 0,
+          competitions: 0,
+          isCurrent: i === 0
+        });
+      }
+
+      artworks.forEach(art => {
+        const d = new Date(art.created_at || art.date);
+        const id = d.toISOString().slice(0, 7);
+        const month = months.find(m => m.id === id);
+        if (month) month.artworks += 1;
+      });
+
+      competitions.forEach(comp => {
+        const d = new Date(comp.date);
+        const id = d.toISOString().slice(0, 7);
+        const month = months.find(m => m.id === id);
+        if (month) month.competitions += 1;
+      });
+
+      return months;
     }
+  }, [artworks, competitions, viewMode, i18n.language]);
+
+  const summaryStats = useMemo(() => {
+    // We only calculate growth for weekly mode as per spec
+    const today = new Date();
+    const thisMonday = getMonday(today).toISOString().split('T')[0];
+    
+    const lastMondayDate = getMonday(today);
+    lastMondayDate.setDate(lastMondayDate.getDate() - 7);
+    const lastMonday = lastMondayDate.toISOString().split('T')[0];
+
+    const stats = {
+      thisWeekArt: 0,
+      thisWeekComp: 0,
+      lastWeekArt: 0,
+      lastWeekComp: 0
+    };
 
     artworks.forEach(art => {
-      const d = new Date(art.created_at || art.date);
-      const monthKey = d.toLocaleString(i18n.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
-  if (months[monthKey]) months[monthKey].artworks += 1;
+      const artMonday = getMonday(new Date(art.created_at || art.date)).toISOString().split('T')[0];
+      if (artMonday === thisMonday) stats.thisWeekArt += 1;
+      if (artMonday === lastMonday) stats.lastWeekArt += 1;
     });
 
     competitions.forEach(comp => {
-      const d = new Date(comp.date);
-      const monthKey = d.toLocaleString(i18n.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
-  if (months[monthKey]) months[monthKey].competitions += 1;
+      const compMonday = getMonday(new Date(comp.date)).toISOString().split('T')[0];
+      if (compMonday === thisMonday) stats.thisWeekComp += 1;
+      if (compMonday === lastMonday) stats.lastWeekComp += 1;
     });
 
-    return Object.values(months);
+    const calculateGrowth = (current, prev) => {
+      if (prev === 0) return current > 0 ? 100 : 0;
+      return Math.round(((current - prev) / prev) * 100);
+    };
+
+    return {
+      art: stats.thisWeekArt,
+      comp: stats.thisWeekComp,
+      artGrowth: calculateGrowth(stats.thisWeekArt, stats.lastWeekArt),
+      compGrowth: calculateGrowth(stats.thisWeekComp, stats.lastWeekComp)
+    };
   }, [artworks, competitions]);
 
   const winRateInsight = useMemo(() => {
     if (competitions.length === 0) return { label: t('analytics.win_rate.start'), color: '#6B7280', emoji: '🌱' };
-    
     const wins = competitions.filter(c => c.result === 'winner' || c.result === 'grand_winner').length;
     const rate = (wins / competitions.length) * 100;
-
     if (rate >= 50) return { label: t('analytics.win_rate.often'), color: '#D97706', emoji: '👑' };
     if (wins > 0) return { label: t('analytics.win_rate.great'), color: '#2563EB', emoji: '⭐' };
     return { label: t('analytics.win_rate.keep_going'), color: '#059669', emoji: '🎨' };
-  }, [competitions]);
+  }, [competitions, t]);
 
   const activityTimeline = useMemo(() => {
-    const activities = [
-      ...artworks.map(a => ({ 
-        type: 'art', 
-        date: new Date(a.created_at || a.date), 
-        text: t('analytics.narrative.art', { title: a.title }) 
-      })),
-      ...competitions.map(c => ({ 
-        type: 'comp', 
-        date: new Date(c.date), 
-        text: t('analytics.narrative.comp', { name: c.name }) 
-      }))
+    return [
+      ...artworks.map(a => ({ type: 'art', date: new Date(a.created_at || a.date), text: t('analytics.narrative.art', { title: a.title }) })),
+      ...competitions.map(c => ({ type: 'comp', date: new Date(c.date), text: t('analytics.narrative.comp', { name: c.name }) }))
     ].sort((a, b) => b.date - a.date).slice(0, 5);
-
-    return activities;
-  }, [artworks, competitions]);
+  }, [artworks, competitions, t]);
 
   return (
     <div className="page-enter analytics-page" style={{ paddingBottom: 'var(--space-2xl)' }}>
-      <div className="section-header">
+      <div className="section-header" style={{ marginBottom: 'var(--space-lg)' }}>
         <button className="btn-icon" onClick={() => navigate(-1)}>
           <ArrowLeft size={20} />
         </button>
@@ -83,98 +169,201 @@ export default function AnalyticsDashboard() {
       </div>
 
       <div className="hero-stats" style={{ 
-        background: 'linear-gradient(135deg, var(--color-primary), #A78BFA)',
+        background: 'linear-gradient(135deg, var(--color-primary), #9333EA)',
         padding: 'var(--space-xl)',
         borderRadius: 'var(--radius-2xl)',
         color: 'white',
         marginBottom: 'var(--space-xl)',
-        boxShadow: '0 10px 25px rgba(124, 58, 237, 0.2)'
+        boxShadow: '0 10px 30px -5px rgba(139, 92, 246, 0.4)'
       }}>
-        <h2 style={{ fontSize: 'var(--text-2xl)', marginBottom: 8 }}>
+        <h2 style={{ fontSize: 'var(--text-2xl)', marginBottom: 8, fontWeight: 800 }}>
           {t('analytics.hero_title', { name: profile?.display_name || 'Little Artist' })} 👨‍🎨
         </h2>
-        <p style={{ opacity: 0.9, fontSize: 'var(--text-sm)' }}>
+        <p style={{ opacity: 0.9, fontSize: 'var(--text-sm)', fontWeight: 500 }}>
           {t('analytics.hero_subtitle')}
         </p>
       </div>
 
-      <div className="grid-2-cols" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)', marginBottom: 'var(--space-xl)' }}>
-        <div className="stat-card-plain" style={{ background: '#F3F4F6', padding: 'var(--space-md)', borderRadius: 'var(--radius-xl)' }}>
-          <div style={{ fontSize: '1.5rem', marginBottom: 4 }}>📈</div>
-          <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>{artworks.length}</div>
-          <div style={{ fontSize: '10px', color: 'var(--color-text-tertiary)' }}>{t('analytics.total_artworks')}</div>
-        </div>
-        <div className="stat-card-plain" style={{ background: '#F3F4F6', padding: 'var(--space-md)', borderRadius: 'var(--radius-xl)' }}>
-          <div style={{ fontSize: '1.5rem', marginBottom: 4 }}>🎯</div>
-          <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>{competitions.length}</div>
-          <div style={{ fontSize: '10px', color: 'var(--color-text-tertiary)' }}>{t('analytics.total_competitions')}</div>
+      {/* Summary Insight Section */}
+      <div className="summary-insights" style={{ marginBottom: 'var(--space-xl)' }}>
+        <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 800, marginBottom: 'var(--space-md)', color: 'var(--color-text-secondary)' }}>
+          {t('analytics.summary.this_week').toUpperCase()}
+        </h3>
+        <div className="grid-2-cols" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
+          <div className="insight-card" style={{ background: 'white', padding: 'var(--space-lg)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-sm)', border: '1px solid #F3F4F6' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+              <div style={{ padding: 8, background: 'var(--color-primary-light)', borderRadius: 'var(--radius-lg)', color: 'var(--color-primary)' }}>
+                <TrendingUp size={20} />
+              </div>
+              <span style={{ 
+                fontSize: '10px', 
+                fontWeight: 800, 
+                padding: '2px 8px', 
+                borderRadius: 'var(--radius-full)',
+                background: summaryStats.artGrowth >= 0 ? '#DCFCE7' : '#FEE2E2',
+                color: summaryStats.artGrowth >= 0 ? '#166534' : '#991B1B'
+              }}>
+                {summaryStats.artGrowth > 0 ? `+${summaryStats.artGrowth}%` : summaryStats.artGrowth === 0 ? t('analytics.summary.growth_stable') : `${summaryStats.artGrowth}%`}
+              </span>
+            </div>
+            <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: 'var(--color-text)' }}>{summaryStats.art}</div>
+            <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>{t('analytics.summary.artworks')}</div>
+          </div>
+
+          <div className="insight-card" style={{ background: 'white', padding: 'var(--space-lg)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-sm)', border: '1px solid #F3F4F6' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+              <div style={{ padding: 8, background: '#FEF3C7', borderRadius: 'var(--radius-lg)', color: '#D97706' }}>
+                <Award size={20} />
+              </div>
+              <span style={{ 
+                fontSize: '10px', 
+                fontWeight: 800, 
+                padding: '2px 8px', 
+                borderRadius: 'var(--radius-full)',
+                background: summaryStats.compGrowth >= 0 ? '#DCFCE7' : '#FEE2E2',
+                color: summaryStats.compGrowth >= 0 ? '#166534' : '#991B1B'
+              }}>
+                {summaryStats.compGrowth > 0 ? `+${summaryStats.compGrowth}%` : summaryStats.compGrowth === 0 ? t('analytics.summary.growth_stable') : `${summaryStats.compGrowth}%`}
+              </span>
+            </div>
+            <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: 'var(--color-text)' }}>{summaryStats.comp}</div>
+            <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>{t('analytics.summary.competitions')}</div>
+          </div>
         </div>
       </div>
 
-      <h3 className="section-subtitle" style={{ fontSize: 'var(--text-sm)', fontWeight: 800, marginBottom: 'var(--space-md)' }}>
-        {t('analytics.growth_title')}
-      </h3>
-      <div style={{ width: '100%', height: 200, background: 'white', padding: 'var(--space-md)', borderRadius: 'var(--radius-xl)', marginBottom: 'var(--space-xl)', boxShadow: 'var(--shadow-sm)' }}>
+      {/* Chart Section */}
+      <div className="chart-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
+        <h3 className="section-subtitle" style={{ fontSize: 'var(--text-sm)', fontWeight: 800, margin: 0 }}>
+          {t('analytics.growth_title')}
+        </h3>
+        <div className="view-toggle" style={{ background: '#F3F4F6', padding: 4, borderRadius: 'var(--radius-lg)', display: 'flex', gap: 4 }}>
+          <button 
+            onClick={() => setViewMode('weekly')}
+            style={{ 
+              padding: '4px 12px', 
+              fontSize: '10px', 
+              fontWeight: 800, 
+              borderRadius: 'var(--radius-md)', 
+              border: 'none',
+              background: viewMode === 'weekly' ? 'white' : 'transparent',
+              boxShadow: viewMode === 'weekly' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+              cursor: 'pointer',
+              color: viewMode === 'weekly' ? 'var(--color-primary)' : 'var(--color-text-tertiary)',
+              transition: 'all 0.2s'
+            }}
+          >
+            {t('analytics.weekly').toUpperCase()}
+          </button>
+          <button 
+            onClick={() => setViewMode('monthly')}
+            style={{ 
+              padding: '4px 12px', 
+              fontSize: '10px', 
+              fontWeight: 800, 
+              borderRadius: 'var(--radius-md)', 
+              border: 'none',
+              background: viewMode === 'monthly' ? 'white' : 'transparent',
+              boxShadow: viewMode === 'monthly' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+              cursor: 'pointer',
+              color: viewMode === 'monthly' ? 'var(--color-primary)' : 'var(--color-text-tertiary)',
+              transition: 'all 0.2s'
+            }}
+          >
+            {t('analytics.monthly').toUpperCase()}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ width: '100%', height: 260, background: 'white', padding: 'var(--space-lg)', borderRadius: 'var(--radius-2xl)', marginBottom: 'var(--space-xl)', boxShadow: 'var(--shadow-sm)', border: '1px solid #F3F4F6' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-            <XAxis dataKey="name" fontSize={10} axisLine={false} tickLine={false} />
-            <YAxis fontSize={10} axisLine={false} tickLine={false} />
-            <Tooltip />
-            <Bar dataKey="artworks" fill="var(--color-primary)" radius={[4, 4, 0, 0]} name={t('dashboard.artworks_count')} />
+          <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+            <XAxis 
+              dataKey="name" 
+              fontSize={9} 
+              axisLine={false} 
+              tickLine={false} 
+              tick={{ fill: 'var(--color-text-tertiary)', fontWeight: 600 }}
+              interval={viewMode === 'weekly' ? 1 : 0}
+            />
+            <YAxis fontSize={9} axisLine={false} tickLine={false} tick={{ fill: 'var(--color-text-tertiary)', fontWeight: 600 }} />
+            <Tooltip 
+              cursor={{ fill: '#F9FAFB' }}
+              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '11px', fontWeight: 600 }}
+            />
+            <Bar dataKey="artworks" radius={[6, 6, 0, 0]} name={t('dashboard.artworks_count')} barSize={viewMode === 'weekly' ? 12 : 24}>
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.isCurrent ? 'var(--color-primary)' : '#E5E7EB'} />
+              ))}
+            </Bar>
+            <Bar dataKey="competitions" radius={[6, 6, 0, 0]} name={t('dashboard.competitions_count')} barSize={viewMode === 'weekly' ? 12 : 24}>
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.isCurrent ? 'var(--color-accent)' : '#F3F4F6'} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
+      {/* Champion Pace Section */}
       <h3 className="section-subtitle" style={{ fontSize: 'var(--text-sm)', fontWeight: 800, marginBottom: 'var(--space-md)' }}>
         {t('analytics.win_rate_title')}
       </h3>
       <div style={{ 
-        background: winRateInsight.color + '10', 
-        border: `2px dashed ${winRateInsight.color}40`,
-        padding: 'var(--space-lg)',
-        borderRadius: 'var(--radius-xl)',
+        background: winRateInsight.color + '08', 
+        border: `1.5px dashed ${winRateInsight.color}30`,
+        padding: 'var(--space-xl)',
+        borderRadius: 'var(--radius-2xl)',
         display: 'flex',
         alignItems: 'center',
-        gap: 'var(--space-md)',
+        gap: 'var(--space-lg)',
         marginBottom: 'var(--space-xl)'
       }}>
-        <div style={{ fontSize: '2.5rem' }}>{winRateInsight.emoji}</div>
-        <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: winRateInsight.color }}>
-          {winRateInsight.label}
+        <div style={{ fontSize: '3rem', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }}>{winRateInsight.emoji}</div>
+        <div>
+          <div style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: winRateInsight.color, marginBottom: 4 }}>
+            {winRateInsight.label}
+          </div>
+          <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', fontWeight: 500 }}>
+             {t('analytics.hero_subtitle')}
+          </div>
         </div>
       </div>
 
-      <h3 className="section-subtitle" style={{ fontSize: 'var(--text-sm)', fontWeight: 800, marginBottom: 'var(--space-md)' }}>
-        {t('analytics.timeline_title')}
-      </h3>
-      <div className="narrative-timeline" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+      {/* Log Section */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
+        <h3 className="section-subtitle" style={{ fontSize: 'var(--text-sm)', fontWeight: 800, margin: 0 }}>
+          {t('analytics.timeline_title')}
+        </h3>
+        <button style={{ background: 'none', border: 'none', color: 'var(--color-primary)', fontSize: '11px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2 }}>
+          {t('dashboard.see_all')} <ChevronRight size={14} />
+        </button>
+      </div>
+      <div className="narrative-timeline" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
         {activityTimeline.map((act, idx) => (
           <div key={idx} style={{ 
             display: 'flex', 
             gap: 'var(--space-md)', 
             alignItems: 'center',
-            padding: 'var(--space-sm) var(--space-md)',
+            padding: 'var(--space-md)',
             background: 'white',
-            borderRadius: 'var(--radius-lg)',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.02)'
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+            border: '1px solid #F9FAFB'
           }}>
             <div style={{ 
-              width: 12, 
-              height: 12, 
+              width: 10, 
+              height: 10, 
               borderRadius: '50%', 
-              background: act.type === 'art' ? 'var(--color-primary)' : 'var(--color-accent)' 
+              background: act.type === 'art' ? 'var(--color-primary)' : 'var(--color-accent)',
+              boxShadow: `0 0 0 4px ${act.type === 'art' ? 'var(--color-primary-light)' : '#FEF3C7'}`
             }} />
-            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+            <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
               {act.text}
             </div>
           </div>
         ))}
-        {activityTimeline.length === 0 && (
-          <div className="text-center" style={{ color: 'var(--color-text-tertiary)', fontSize: 'var(--text-sm)', padding: 'var(--space-xl)' }}>
-            {t('analytics.no_activity')}
-          </div>
-        )}
       </div>
     </div>
   );

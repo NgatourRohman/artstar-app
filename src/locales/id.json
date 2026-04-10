@@ -110,6 +110,17 @@
     "win_rate_title": "LAJU JUARA",
     "timeline_title": "CATATAN SERUMU",
     "no_activity": "Mulai petualanganmu dengan membuat karya pertama! ✨",
+    "view_mode": "Skala Tampilan",
+    "weekly": "8 Minggu",
+    "monthly": "6 Bulan",
+    "summary": {
+      "this_week": "Aktivitas Minggu Ini",
+      "artworks": "Karya dibuat",
+      "competitions": "Lomba diikuti",
+      "growth_up": "+{{percent}}% dari minggu lalu",
+      "growth_down": "-{{percent}}% dari minggu lalu",
+      "growth_stable": "Sama dengan minggu lalu"
+    },
     "win_rate": {
       "start": "Ayo mulai petualanganmu!",
       "often": "Wah, Kamu Sering Menang! 🏆",

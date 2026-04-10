@@ -110,6 +110,17 @@
     "win_rate_title": "CHAMPION PACE",
     "timeline_title": "ADVENTURE LOG",
     "no_activity": "Start your adventure by creating your first artwork! ✨",
+    "view_mode": "View Scale",
+    "weekly": "8 Weeks",
+    "monthly": "6 Months",
+    "summary": {
+      "this_week": "Activity This Week",
+      "artworks": "Artworks created",
+      "competitions": "Competitions joined",
+      "growth_up": "+{{percent}}% from last week",
+      "growth_down": "-{{percent}}% from last week",
+      "growth_stable": "Same as last week"
+    },
     "win_rate": {
       "start": "Let's start your adventure!",
       "often": "Wow, You Win Often! 🏆",

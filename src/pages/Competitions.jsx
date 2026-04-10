@@ -170,26 +170,31 @@ export default function Competitions() {
                 onClick={() => setSelectedComp(comp)}
                 style={{ cursor: 'pointer' }}
               >
+                {/* 1. LeftColumn: Icon */}
                 <div
                   className="competition-result-icon"
                   style={{ background: resultConf.bg }}
                 >
                   {resultConf.emoji}
                 </div>
+
+                {/* 2. MiddleColumn: Content Info */}
                 <div className="competition-card-info">
-                  <div className="competition-card-header">
-                    <div className="competition-card-name">
-                      {comp.name}
-                    </div>
+                  <div className="competition-card-name">
+                    {comp.name}
+                  </div>
+                  <div className="competition-card-meta">
                     <span className="competition-status-tag" style={{ 
                       background: STATUS_CONFIG[comp.status]?.bg || '#F3F4F6',
                       color: STATUS_CONFIG[comp.status]?.color || '#6B7280',
                     }}>
                       {t(`competitions.status.${comp.status}`).toUpperCase()}
                     </span>
+                    <span className="competition-card-date">{formatDate(comp.date)}</span>
                   </div>
-                  <div className="competition-card-date">{formatDate(comp.date)}</div>
                 </div>
+
+                {/* 3. RightColumn: Result Badge */}
                 <span
                   className={`competition-result-badge result-${comp.result}`}
                 >

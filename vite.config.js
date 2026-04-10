@@ -8,6 +8,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'inline',
+      manifestFilename: 'manifest.json',
       includeAssets: ['favicon.svg', 'icons/*.svg'],
       devOptions: {
         enabled: true,

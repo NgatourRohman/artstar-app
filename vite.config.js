@@ -7,6 +7,8 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'inline',
+      includeAssets: ['favicon.svg', 'icons/*.svg'],
       devOptions: {
         enabled: true,
       },
@@ -19,6 +21,8 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
+        scope: '/',
+        categories: ['education', 'entertainment', 'productivity'],
         icons: [
           {
             src: '/icons/favicon-app.svg',

@@ -66,15 +66,19 @@ function AppRoutes() {
   );
 }
 
+import { ProfileProvider } from './context/ProfileContext';
+
 export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
         <NotificationProvider>
           <AuthProvider>
-            <AppRoutes />
-            <Analytics />
-            <ToastContainer />
+            <ProfileProvider>
+              <AppRoutes />
+              <Analytics />
+              <ToastContainer />
+            </ProfileProvider>
           </AuthProvider>
         </NotificationProvider>
       </BrowserRouter>

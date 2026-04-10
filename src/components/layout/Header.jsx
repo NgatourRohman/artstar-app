@@ -1,14 +1,15 @@
 import { useAuth } from '../../context/AuthContext';
-import { DEMO_PROFILE } from '../../lib/demoData';
+import { useProfile } from '../../hooks/useProfile';
 import { Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function Header() {
-  const { user, isDemoMode } = useAuth();
+  const { isDemoMode } = useAuth();
+  const { profile } = useProfile();
   const { t } = useTranslation();
-  const profile = isDemoMode ? DEMO_PROFILE : user;
-  const avatar = profile?.avatar_url || profile?.user_metadata?.avatar_url || '🦄';
-  const name = profile?.display_name || profile?.user_metadata?.display_name || 'Little Artist';
+
+  const avatar = profile?.avatar_url || '🦄';
+  const name = profile?.display_name || 'Little Artist';
 
   const getGreetingKey = () => {
     const hour = new Date().getHours();

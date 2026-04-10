@@ -44,40 +44,42 @@ export default function Badges() {
         </div>
       </div>
 
-      <div className="badges-grid">
-        {badges.map((badge) => (
-          <div
-            key={badge.id}
-            className={`badge-card ${badge.unlocked ? '' : 'locked'}`}
-          >
-            {/* Glow effect for unlocked */}
-            {badge.unlocked && (
-              <div
-                className="badge-card-glow"
-                style={{
-                  boxShadow: `inset 0 0 30px ${badge.color}15, 0 0 20px ${badge.color}10`,
-                }}
-              />
-            )}
-            
-            <div className="badge-card-icon">
-              {badge.unlocked ? badge.icon : '🔒'}
-            </div>
-            <div className="badge-card-name" style={badge.unlocked ? { color: badge.color } : {}}>
-              {badge.unlocked ? t(badge.name) : '???'}
-            </div>
-            <div className="badge-card-desc">
-              {t(badge.description)}
-            </div>
-            {badge.unlocked ? (
-              <div className="badge-card-date">
-                {t('timeline.earned_badge')} {formatDate(badge.unlocked_at)}
+      <div className="badges-container">
+        <div className="badges-grid">
+          {badges.map((badge) => (
+            <div
+              key={badge.id}
+              className={`badge-card ${badge.unlocked ? '' : 'locked'}`}
+            >
+              {/* Glow effect for unlocked */}
+              {badge.unlocked && (
+                <div
+                  className="badge-card-glow"
+                  style={{
+                    boxShadow: `inset 0 0 30px ${badge.color}15, 0 0 20px ${badge.color}10`,
+                  }}
+                />
+              )}
+              
+              <div className="badge-card-icon">
+                {badge.unlocked ? badge.icon : '🔒'}
               </div>
-            ) : (
-              <div className="badge-card-locked-label">{t('badges.locked_desc')} 💪</div>
-            )}
-          </div>
-        ))}
+              <div className="badge-card-name" style={badge.unlocked ? { color: badge.color } : {}}>
+                {badge.unlocked ? t(badge.name) : '???'}
+              </div>
+              <div className="badge-card-desc">
+                {t(badge.description)}
+              </div>
+              {badge.unlocked ? (
+                <div className="badge-card-date">
+                  {t('timeline.earned_badge')} {formatDate(badge.unlocked_at)}
+                </div>
+              ) : (
+                <div className="badge-card-locked-label">{t('badges.locked_desc')} 💪</div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

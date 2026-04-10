@@ -8,6 +8,7 @@ import { useBadges } from '../hooks/useBadges';
 import { useProfile } from '../hooks/useProfile';
 import { useAuth } from '../context/AuthContext';
 import { DEMO_PROFILE } from '../lib/demoData';
+import BadgeSlider from '../components/ui/BadgeSlider';
 
 const CATEGORY_EMOJIS = {
   drawing: '✏️',
@@ -32,12 +33,13 @@ export default function Dashboard() {
   const { isDemoMode } = useAuth();
   const { artworks } = useArtworks();
   const { competitions } = useCompetitions();
-  const { badgeCount, getLatestBadge } = useBadges();
+  const { getBadgesWithStatus } = useBadges();
   const { profile } = useProfile();
   const { t } = useTranslation();
 
   const displayProfile = isDemoMode ? DEMO_PROFILE : profile;
-  const latestBadge = getLatestBadge();
+  const allBadges = getBadgesWithStatus();
+  const unlockedBadges = allBadges.filter(b => b.unlocked);
   const artistName = displayProfile?.display_name || 'Artist';
 
   const getGreeting = () => {
@@ -167,20 +169,14 @@ export default function Dashboard() {
             <Award size={22} color="#BE123C" />
           </div>
           <div className="stat-card-value" style={{ color: '#EC4899' }}>
-            {badgeCount}
+            {unlockedBadges.length}
           </div>
           <div className="stat-card-label">{t('dashboard.badges_count')}</div>
         </div>
       </div>
 
-      {latestBadge && (
-        <div className="latest-badge-card" onClick={() => navigate('/badges')} style={{ cursor: 'pointer' }}>
-          <div className="latest-badge-icon">{latestBadge.icon}</div>
-          <div className="latest-badge-info">
-            <div className="latest-badge-label">✨ {t('dashboard.latest_badge')}</div>
-            <div className="latest-badge-name">{t(latestBadge.name)}</div>
-          </div>
-        </div>
+      {unlockedBadges.length > 0 && (
+        <BadgeSlider badges={unlockedBadges} />
       )}
 
       {artworks.length > 0 && (

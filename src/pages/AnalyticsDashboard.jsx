@@ -188,70 +188,110 @@ export default function AnalyticsDashboard() {
 
       {/* Summary Insight Section */}
       <div className="summary-insights" style={{ marginBottom: 'var(--space-xl)' }}>
-        <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 800, marginBottom: 'var(--space-md)', color: 'var(--color-text-secondary)' }}>
+        <h3 style={{ fontSize: 'var(--text-xs)', fontWeight: 800, marginBottom: 'var(--space-md)', color: 'var(--color-text-tertiary)', letterSpacing: '1px' }}>
           {t('analytics.summary.this_week').toUpperCase()}
         </h3>
-        <div className="grid-2-cols" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
-          <div className="insight-card" style={{ background: 'white', padding: 'var(--space-lg)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-sm)', border: '1px solid #F3F4F6' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-              <div style={{ padding: 8, background: 'var(--color-primary-light)', borderRadius: 'var(--radius-lg)', color: 'var(--color-primary)' }}>
-                <TrendingUp size={20} />
-              </div>
-              <span style={{ 
-                fontSize: '10px', 
-                fontWeight: 800, 
-                padding: '2px 8px', 
-                borderRadius: 'var(--radius-full)',
-                background: summaryStats.artGrowth >= 0 ? '#DCFCE7' : '#FEE2E2',
-                color: summaryStats.artGrowth >= 0 ? '#166534' : '#991B1B'
-              }}>
-                {summaryStats.artGrowth > 0 ? `+${summaryStats.artGrowth}%` : summaryStats.artGrowth === 0 ? t('analytics.summary.growth_stable') : `${summaryStats.artGrowth}%`}
-              </span>
+        <div className="grid-2-cols" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 'var(--space-md)' }}>
+          {/* Artworks Card */}
+          <div className="insight-card" style={{ 
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            padding: 'var(--space-md)',
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+            border: '1px solid rgba(255,255,255,0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-md)',
+            transition: 'all 0.3s cubic-bezier(0.19, 1, 0.22, 1)',
+            cursor: 'default'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(99, 102, 241, 0.1)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.03)'; }}
+          >
+            <div style={{ padding: 10, background: 'rgba(99, 102, 241, 0.1)', borderRadius: 'var(--radius-lg)', color: '#6366F1', display: 'flex' }}>
+              <TrendingUp size={20} />
             </div>
-            <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: 'var(--color-text)' }}>{summaryStats.art}</div>
-            <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>{t('analytics.summary.artworks')}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 'var(--text-xl)', fontWeight: 800, color: 'var(--color-text)', lineHeight: 1 }}>{summaryStats.art}</div>
+              <div style={{ fontSize: '10px', color: 'var(--color-text-tertiary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: 4 }}>
+                {t('analytics.summary.artworks')}
+              </div>
+            </div>
+            <div style={{ 
+              fontSize: '10px', 
+              fontWeight: 800, 
+              padding: '4px 10px', 
+              borderRadius: 'var(--radius-full)',
+              background: summaryStats.artGrowth >= 0 ? '#DCFCE7' : '#FEE2E2',
+              color: summaryStats.artGrowth >= 0 ? '#166534' : '#991B1B',
+              flexShrink: 0
+            }}>
+              {summaryStats.artGrowth > 0 ? `+${summaryStats.artGrowth}%` : summaryStats.artGrowth === 0 ? t('analytics.summary.growth_stable') : `${summaryStats.artGrowth}%`}
+            </div>
           </div>
 
-          <div className="insight-card" style={{ background: 'white', padding: 'var(--space-lg)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-sm)', border: '1px solid #F3F4F6' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-              <div style={{ padding: 8, background: '#FEF3C7', borderRadius: 'var(--radius-lg)', color: '#D97706' }}>
-                <Award size={20} />
-              </div>
-              <span style={{ 
-                fontSize: '10px', 
-                fontWeight: 800, 
-                padding: '2px 8px', 
-                borderRadius: 'var(--radius-full)',
-                background: summaryStats.compGrowth >= 0 ? '#DCFCE7' : '#FEE2E2',
-                color: summaryStats.compGrowth >= 0 ? '#166534' : '#991B1B'
-              }}>
-                {summaryStats.compGrowth > 0 ? `+${summaryStats.compGrowth}%` : summaryStats.compGrowth === 0 ? t('analytics.summary.growth_stable') : `${summaryStats.compGrowth}%`}
-              </span>
+          {/* Competitions Card */}
+          <div className="insight-card" style={{ 
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            padding: 'var(--space-md)',
+            borderRadius: 'var(--radius-xl)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+            border: '1px solid rgba(255,255,255,0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-md)',
+            transition: 'all 0.3s cubic-bezier(0.19, 1, 0.22, 1)',
+            cursor: 'default'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(245, 158, 11, 0.1)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.03)'; }}
+          >
+            <div style={{ padding: 10, background: 'rgba(245, 158, 11, 0.1)', borderRadius: 'var(--radius-lg)', color: '#F59E0B', display: 'flex' }}>
+              <Award size={20} />
             </div>
-            <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: 'var(--color-text)' }}>{summaryStats.comp}</div>
-            <div style={{ fontSize: '11px', color: 'var(--color-text-tertiary)', fontWeight: 600 }}>{t('analytics.summary.competitions')}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 'var(--text-xl)', fontWeight: 800, color: 'var(--color-text)', lineHeight: 1 }}>{summaryStats.comp}</div>
+              <div style={{ fontSize: '10px', color: 'var(--color-text-tertiary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: 4 }}>
+                {t('analytics.summary.competitions')}
+              </div>
+            </div>
+            <div style={{ 
+              fontSize: '10px', 
+              fontWeight: 800, 
+              padding: '4px 10px', 
+              borderRadius: 'var(--radius-full)',
+              background: summaryStats.compGrowth >= 0 ? '#DCFCE7' : '#FEE2E2',
+              color: summaryStats.compGrowth >= 0 ? '#166534' : '#991B1B',
+              flexShrink: 0
+            }}>
+              {summaryStats.compGrowth > 0 ? `+${summaryStats.compGrowth}%` : summaryStats.compGrowth === 0 ? t('analytics.summary.growth_stable') : `${summaryStats.compGrowth}%`}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Chart Section */}
       <div className="chart-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
-        <h3 className="section-subtitle" style={{ fontSize: 'var(--text-sm)', fontWeight: 800, margin: 0 }}>
-          {t('analytics.growth_title')}
+        <h3 className="section-subtitle" style={{ fontSize: 'var(--text-xs)', fontWeight: 800, margin: 0, color: 'var(--color-text-tertiary)', letterSpacing: '1px' }}>
+          {t('analytics.growth_title').toUpperCase()}
         </h3>
-        <div className="view-toggle" style={{ background: '#F3F4F6', padding: 4, borderRadius: 'var(--radius-lg)', display: 'flex', gap: 4 }}>
+        <div className="view-toggle" style={{ background: '#F1F5F9', padding: 4, borderRadius: 'var(--radius-lg)', display: 'flex', gap: 4 }}>
           <button 
             onClick={() => setViewMode('weekly')}
             style={{ 
-              padding: '4px 12px', 
+              padding: '6px 14px', 
               fontSize: '10px', 
               fontWeight: 800, 
               borderRadius: 'var(--radius-md)', 
               border: 'none',
               background: viewMode === 'weekly' ? 'white' : 'transparent',
-              boxShadow: viewMode === 'weekly' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+              boxShadow: viewMode === 'weekly' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none',
               cursor: 'pointer',
-              color: viewMode === 'weekly' ? 'var(--color-primary)' : 'var(--color-text-tertiary)',
+              color: viewMode === 'weekly' ? '#6366F1' : 'var(--color-text-tertiary)',
               transition: 'all 0.2s'
             }}
           >
@@ -260,15 +300,15 @@ export default function AnalyticsDashboard() {
           <button 
             onClick={() => setViewMode('monthly')}
             style={{ 
-              padding: '4px 12px', 
+              padding: '6px 14px', 
               fontSize: '10px', 
               fontWeight: 800, 
               borderRadius: 'var(--radius-md)', 
               border: 'none',
               background: viewMode === 'monthly' ? 'white' : 'transparent',
-              boxShadow: viewMode === 'monthly' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none',
+              boxShadow: viewMode === 'monthly' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none',
               cursor: 'pointer',
-              color: viewMode === 'monthly' ? 'var(--color-primary)' : 'var(--color-text-tertiary)',
+              color: viewMode === 'monthly' ? '#6366F1' : 'var(--color-text-tertiary)',
               transition: 'all 0.2s'
             }}
           >
@@ -281,16 +321,18 @@ export default function AnalyticsDashboard() {
         width: '100%', 
         height: 300, 
         minWidth: 0,
-        background: 'white', 
+        background: 'rgba(255, 255, 255, 0.7)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
         padding: 'var(--space-lg)', 
         borderRadius: 'var(--radius-2xl)', 
         marginBottom: 'var(--space-xl)', 
-        boxShadow: 'var(--shadow-sm)', 
-        border: '1px solid #F3F4F6' 
+        boxShadow: '0 4px 20px rgba(0,0,0,0.03)', 
+        border: '1px solid rgba(255,255,255,0.8)' 
       }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 20, right: 30, left: -10, bottom: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+          <BarChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
             <XAxis 
               dataKey="name" 
               fontSize={9} 
@@ -301,17 +343,17 @@ export default function AnalyticsDashboard() {
             />
             <YAxis fontSize={9} axisLine={false} tickLine={false} tick={{ fill: 'var(--color-text-tertiary)', fontWeight: 600 }} />
             <Tooltip 
-              cursor={{ fill: '#F9FAFB' }}
-              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '11px', fontWeight: 600 }}
+              cursor={{ fill: '#F1F5F9', radius: 8 }}
+              contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', fontSize: '11px', fontWeight: 600 }}
             />
-            <Bar dataKey="artworks" radius={[6, 6, 0, 0]} name={t('dashboard.artworks_count')} barSize={viewMode === 'weekly' ? 12 : 24}>
+            <Bar dataKey="artworks" radius={[6, 6, 0, 0]} name={t('dashboard.artworks_count')} barSize={viewMode === 'weekly' ? 10 : 20}>
               {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.isCurrent ? 'var(--color-primary)' : '#E5E7EB'} />
+                <Cell key={`cell-${index}`} fill={entry.isCurrent ? '#6366F1' : '#CBD5E1'} />
               ))}
             </Bar>
-            <Bar dataKey="competitions" radius={[6, 6, 0, 0]} name={t('dashboard.competitions_count')} barSize={viewMode === 'weekly' ? 12 : 24}>
+            <Bar dataKey="competitions" radius={[6, 6, 0, 0]} name={t('dashboard.competitions_count')} barSize={viewMode === 'weekly' ? 10 : 20}>
               {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.isCurrent ? 'var(--color-accent)' : '#F3F4F6'} />
+                <Cell key={`cell-${index}`} fill={entry.isCurrent ? '#F59E0B' : '#E2E8F0'} />
               ))}
             </Bar>
           </BarChart>
